@@ -27,14 +27,6 @@ int main()
       }
     }
   }
-
-  rep(i,ss+1){
-    rep(j,ts+1){
-      cout << dp[i][j] << " ";
-    }
-    cout  << "\n";
-  }
-  
   
   string res = "";
   int x = ss,y = ts;
