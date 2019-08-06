@@ -27,8 +27,27 @@ int main()
       }
     }
   }
-  
-  cout << dp[ss][ts] << "\n";
 
+  rep(i,ss+1){
+    rep(j,ts+1){
+      cout << dp[i][j] << " ";
+    }
+    cout  << "\n";
+  }
+  
+  
+  string res = "";
+  int x = ss,y = ts;
+  while(y>0){
+    if( dp[x][y] == dp[x][y-1] ) y--;
+    else if( dp[x][y] ==dp[x-1][y]) x--;
+    else if( dp[x][y]-1 == dp[x-1][y-1] && dp[x][y]-1 == dp[x-1][y] && dp[x][y]-1 == dp[x][y-1] ) {
+      res += s[x-1];
+      x--;y--;
+    }
+  }
+  reverse(res.begin(), res.end());
+  cout << res << "\n";
+  
   return 0;
 }
