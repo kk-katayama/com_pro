@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 #include <iostream>
 #include <algorithm>
 #define rep(i,n) for(int i = 0 ; i < n ; ++i)
@@ -10,3 +11,6 @@ int main()
   cout << max(c-(a-b) , 0) << "\n";
   return 0;
 }
+=======
+
+>>>>>>> 5a376ea1dce473c098571f764325db800569ed2a
