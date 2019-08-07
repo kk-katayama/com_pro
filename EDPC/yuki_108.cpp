@@ -36,7 +36,6 @@ int main()
   }
   
   printf("%.7f\n", rec(one,two,thr));
-
   
   return 0;
 }
