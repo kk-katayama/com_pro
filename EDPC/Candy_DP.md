@@ -1,23 +1,29 @@
-・EDPC M Candies
+# 重複ありなんちゃら
 
-dp[i][j] := i番目まで(0-indexed)の子供にj個のアメを分け与える場合の数
+蟻本p.67
 
-<遷移>
-dp[i+1][j] = sum_k=0^min(j,a[i]) dp[i][j-k]
+## EDPC M Candies
+
+`dp[i][j] := i番目まで(0-indexed)の子供にj個のアメを分け与える場合の数`
+
+#### 遷移
+`dp[i+1][j] = sum_k=0^min(j,a[i]) dp[i][j-k]`
 
 これではTLE
 
-*j<=a[i]のとき
-sum_k=0^j dp[i+1][j-k] = dp[i][j] + dp[i][j-1] + ... + dp[i][0]  
-                       = dp[i][j] + sum_l=0^j-1 dp[i][j-1-l]
-                       = dp[i][j] + dp[i+1][j-1]
-*j>a[i]のとき
-sum_k=0^a[i] dp[i+1][j-k] = dp[i][j] + dp[i][j-1] + ... + dp[i][j-a[i]]  
-                          = dp[i][j] + sum_l=0^j-1 dp[i][j-1-l] - dp[i][j-1-a[i]]
-                          = dp[i][j] + dp[i+1][j-1] - dp [i][j-1-a[i]]
+* `j<=a[i]`のとき  
+    sum_k=0^j dp[i+1][j-k]  
+    = dp[i][j] + dp[i][j-1] + ... + dp[i][0]  
+    = dp[i][j] + sum_l=0^j-1 dp[i][j-1-l]  
+    = dp[i][j] + dp[i+1][j-1]                    
+* `j>a[i]`のとき  
+    sum_k=0^a[i] dp[i+1][j-k]  
+    = dp[i][j] + dp[i][j-1] + ... + dp[i][j-a[i]]  
+    = dp[i][j] + sum_l=0^j-1 dp[i][j-1-l] - dp[i][j-1-a[i]]  
+    = dp[i][j] + dp[i+1][j-1] - dp [i][j-1-a[i]]  
 
 
-***遷移の行き先を絞ってから考える方法
+#### 遷移の行き先を絞ってから考える方法
 
 dp[i][j] がどこから来そうかを考えると dp[i-1][j] dp[i][j-1]から来そうな気がする(こいつらから来ればforで回せる)
 
