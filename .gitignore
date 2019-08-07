@@ -1,1 +1,3 @@
-/EDPC/test.cpp
+/EDPC/*
+!/EDPC/*.cpp
+!/EDPC/*.md
