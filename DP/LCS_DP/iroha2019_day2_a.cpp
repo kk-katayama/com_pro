@@ -36,7 +36,9 @@ struct LCS{
     
   }
 
-
+  //LCSの復元。solve()の後に行う
+  string restore(){
+  }
   
 };
 int main()
