@@ -6,12 +6,12 @@
 using namespace std;
 typedef long long ll;
 template <typename X>
-struct ShakuTori{
+struct Array{
   vector<X> array;
   int n;
   vector<X> sum;
   
-  ShakuTori(vector<X> _array)
+  Array(vector<X> _array)
   {
     array = _array;
     n = array.size();    
@@ -26,49 +26,46 @@ struct ShakuTori{
     }
   }
   
-  //[l,r)の和array[l]+...+array[r-1]を返す
+  //array[l]+...+array[r]を返す
   X segsum(int l,int r)
   {
-    return sum[r] - sum[l];
+    return sum[r+1] - sum[l];
   }
-  
-  int worm_count(X x)
+
+  int abc032d_solve(X k)
   {
+    rep(i,n) if(array[i]==0) return n;
+    int l = 0;
+    int r = 1;
     int res = 0;
-    int l = 0,r = 1;
-    X sum = segsum(l,r);
+    X sum = array[0];
     while(1){
-      while(sum<=x){
-	res += r - l;
-	cout << l << " " << r << "\n";
+      while(sum<=k||r==l){
+	res = max(res,r-l);
 	r++;
-	if(r == n+1) break;	
-	sum = segsum(l,r);
+	if(r == n+1) break;
+	sum *= array[r-1];
       }
       if(r == n+1) break;
+      sum /= array[l];
       l++;
-      sum = segsum(l,r);
     }
     return res;
-  }
     
+  }
+  
 };
-
 int main()
 {
-  int n,q;
-  cin >> n >> q;
-  vector<ll> a(n);
-  vector<ll> z(q);
-  rep(i,n) cin >> a[i];
-  rep(i,q) cin >> z[i];
-  
-  ShakuTori<ll> arr(a);
-  arr.make_sum();
-  
-  rep(i,q) cout << arr.worm_count(z[i]) << "\n";
-  
+  int n;
+  ll k;
+  cin >> n >> k;
+  vector<ll> s(n);
+  rep(i,n) cin >> s[i];
 
+  Array<ll> arr(s);
+  cout << arr.abc032d_solve(k) << "\n";
+  
   
   return 0;
 }
