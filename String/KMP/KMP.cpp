@@ -66,7 +66,7 @@ struct KMP{
 	}
 	if(i==n) break;      
       }
-      if(j==0) i++;
+      if(j==0)	i++;
       else j = table[j];
     }
     return res;
