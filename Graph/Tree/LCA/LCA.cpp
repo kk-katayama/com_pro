@@ -73,6 +73,22 @@ struct Tree
     }
     return res;
   }
+
+  int distance(int u,int v){
+    int w = LCA(u,v);
+    return depth[u]+depth[v]-2*depth[w];
+  }
+  
+  void show_par(){
+    rep(i,node){
+      cout << i << " " << par[i][0] << "\n";
+    }
+  }
+  void show_depth(){
+    rep(i,node){
+      cout << i << " " << depth[i] << "\n";
+    }
+  }  
 };
 int main()
 {
@@ -96,12 +112,21 @@ int main()
   rep(i,tr.node){
     cout << i << " " << tr.depth[i] << "\n";
     }*/
+
+  tr.show_par();
+  tr.show_depth();
+  int m;
+  cin >> m;
+  vector<int> u(m),v(m);
+  rep(i,m){
+    cin >> u[i] >> v[i];
+    u[i]--;
+    v[i]--;
+  }
   
-  int c,d;
-  cin >> c >> d;
-  c--;
-  d--;
-  cout << tr.LCA(c,d) << "\n";
+  rep(i,m){
+    cout << tr.distance(u[i],v[i]) << "\n";
+  }
   
   return 0;
 }

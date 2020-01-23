@@ -4,21 +4,56 @@
 #define rep(i,n) for(int i=0;i<n;++i)
 #define rep1(i,n) for(int i=1;i<=n;++i)
 using namespace std;
-struct DAG{
+struct Graph{
   int node;
+  int edge_num;
   vector<vector<int> > edge;
   vector<bool> visited,visiting;
   vector<int> dp;
+  vector<int> top;
+  vector<bool> used;
   
-  DAG(int N)
+  Graph(int N)
   {
     node = N;
     edge.resize(N);
+  }
+
+  Graph(int n,int m,vector<int> a,vector<int> b){
+    node = n;
+    edge_num = m;
+    edge.resize(node);
+    rep(i,edge_num){
+      edge[a[i]].push_back(b[i]);
+    }
   }
   
   void add_edge(int from,int to)
   {
     edge[from].push_back(to);
+  }
+
+  void top_dfs(int v){
+    if(used[v]) return;
+    used[v] = true;
+    for(auto w:edge[v]){
+      top_dfs(w);
+    }
+    top.push_back(v);
+  }
+
+  void t_sort(){
+    used.assign(node,false);
+    rep(i,node){
+      top_dfs(i);
+    }
+    reverse(top.begin(), top.end());
+  }
+
+  void show_top(){
+    rep(i,node){
+      cout << top[i] << "\n";
+    }
   }
   
   bool dfs_find_loop(int v)
@@ -41,6 +76,11 @@ struct DAG{
     visiting.assign(node,0);
     rep(i,node){
       if(!visited[i]) f = f&&dfs_find_loop(i);
+    }
+    rep(i,node){
+      if(visiting[i]){
+	cout << i << "\n";
+      }
     }
     return f;
   }
@@ -77,6 +117,16 @@ struct DAG{
 
 int main()
 {
+  int n,m;
+  cin >> n >> m;
+  vector<int> a(m),b(m);
+  rep(i,m){
+    cin >> a[i] >> b[i];
+  }
+
+  Graph gp(n,m,a,b);
+  gp.t_sort();
+  gp.show_top();
   
   return 0;
 }

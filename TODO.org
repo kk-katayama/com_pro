@@ -1,0 +1,5 @@
+* TODO 包除原理を学べ
+* TODO BFSの精進しろ
+* TODO DFSの精進しろ
+* TODO 2部グラフ判定のライブラリを作れ
+* TODO JSC2019final Bを解け

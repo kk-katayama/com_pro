@@ -6,54 +6,84 @@
 #define rep1(i,n) for(int i=1;i<=n;++i)
 using namespace std;
 typedef long long ll;
-const ll infl = 1LL<<60;
 template <typename X>
-struct BellmanFord{
+struct Graph{
   int node;
   vector<vector<pair<int,X>>> edge;
-  vector<X> d;
-
-  BellmanFord(int _n){
+  vector<vector<int>> rev;  
+  vector<X> d;//distance from start 
+  const X inf = 1e+13;//initial value
+  vector<bool> visit;//visited flag
+  vector<bool> f;//Can node 's' visit 'g' ?
+  
+  Graph(int _n){
     node = _n;
-    d.assign(node,-infl);
     edge.resize(node);
+    rev.resize(node);
   }
   
-  //辺の追加
   void add_edge(int from,int to,X cost){
     edge[from].push_back(make_pair(to,cost));
   }
- 
-  void bellmanford(int s){
-    d[s] = 0;
-    rep(i,node-1){
-      rep(j,node){
-	if(d[j]==-infl) continue;
-	for(auto& k:edge[j]){
-	  d[k.first] = max(d[k.first],d[j]+k.second);
-	}
-      }
-    }
-    
-    vector<bool> pos(node,0);
-    rep(i,node){
-      rep(j,node){
-	if(d[j]==-infl) continue;
-	for(auto& k:edge[j]){
-	  if(d[k.first]<d[j]+k.second){
-	    pos[k.first] = true;
-	    d[k.first] = d[j] + k.second;
-	  }
-	  if(pos[j]) pos[k.first] = true; 
-	}
-      }
-    }
-
-    rep(i,node) if(pos[i]) d[i] = infl;
-    
+  
+  void add_rev(int from,int to){
+    rev[from].push_back(to);
   }
 
+  void dfs(int v){
+    visit[v] = true;
+    f[v] = true;
+    for(auto w:rev[v]){
+      if(visit[w]){
+	continue;
+      }
+      dfs(w);
+    }
+  }
+
+  void run_dfs(int g){//check each node can reach goal
+    visit.assign(node,false);
+    f.assign(node,false);
+    f[g] = true;
+    dfs(g);
+  }
+
+  void check_f(){
+    rep(i,node){
+      cout << i << ":" << f[i] << "\n";
+    }
+  }
+  
+  bool bellmanford(int s){//if graph have negative-loop, return false
+    d.assign(node,inf);
+    d[s] = 0;
+    bool flag = true;
+    rep(i,node){
+      rep(v,node){
+	if(d[v]==inf) continue;
+	for(auto w:edge[v]){
+	  if(d[w.first]>d[v] + w.second){
+	    d[w.first] = d[v] + w.second;
+	    if(i==node-1){
+	      //**********need in abc061d and abc137e**************	    
+	      if(f[w.first]){
+		flag = false;
+	      }
+	      //	      flag = false;
+	    }
+	  }
+	}
+      }
+    }
+    return flag;
+  }
+
+  X get_d(int v){
+    return d[v];
+  }
+  
 };
+
 
 int main()
 {
@@ -68,15 +98,23 @@ int main()
     c[i] -= p;
   }
 
-  BellmanFord<ll> bf(n);
+  Graph<ll> bf(n);
 
-  rep(i,m) bf.add_edge(a[i],b[i],c[i]);
+  rep(i,m) bf.add_edge(a[i],b[i],-c[i]);
 
-  bf.bellmanford(0);
+  rep(i,m){
+    bf.add_rev(b[i],a[i]);
+  }
 
-  cout << (bf.d[n-1]!=infl?(max(bf.d[n-1],(ll)0)):-1) << "\n";
+  bf.run_dfs(n-1);
+  //  bf.check_f();
 
+  if(bf.bellmanford(0)){
+    cout << max(0LL,-bf.get_d(n-1)) << "\n";
+  }
+  else{
+    cout << -1 << "\n";
+  }
   
   return 0;
 }
-

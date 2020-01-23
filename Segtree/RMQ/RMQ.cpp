@@ -10,7 +10,7 @@ struct RMQ{
   vector<X> dat;
   int n;
   X init;
-  
+
   RMQ(int _n,X _init)
   {
     n = 1;

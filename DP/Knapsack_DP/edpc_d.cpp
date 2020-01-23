@@ -29,3 +29,5 @@ int main()
   cout << dp[n][wmax] << "\n";
   return 0;
 }
+
+

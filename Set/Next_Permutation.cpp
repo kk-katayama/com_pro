@@ -14,8 +14,8 @@ int main()
   sort(vec.begin(), vec.end());
   
   do{
-    rep(i,n) cout << vec[i] << " ";
-    cout  << "\n";
+    // rep(i,n) cout << vec[i] << " ";
+    // cout  << "\n";
   } while(next_permutation(vec.begin(), vec.end()));
   
   return 0;
