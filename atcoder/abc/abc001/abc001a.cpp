@@ -6,8 +6,8 @@
 using namespace std;
 int main()
 {
-  int n,x;
-  cin >> n >> x;
-  cout << min(x-1,n-x) << "\n";
+  int a,b;
+  cin >> a >> b;
+  cout << a-b << "\n";
   return 0;
 }
