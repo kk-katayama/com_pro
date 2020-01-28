@@ -1,25 +1,25 @@
-グラフアルゴリズムを扱うクラス  
+# グラフアルゴリズムを扱うクラス  
 
-できること  
-・コンストラクタ(int n)  
+## できること  
+### ・コンストラクタ(int n)  
 ->頂点数nのグラフ作成  
-・コンストラクタ(int n,int m,vector a,vector b)  
+### ・コンストラクタ(int n,int m,vector a,vector b)  
 ->頂点数n,辺数m,a->bの辺を持つグラフ作成  
-・コンストラクタ(int n,int m,vector a,vector b,vector c)  
+### ・コンストラクタ(int n,int m,vector a,vector b,vector c)  
 ->頂点数n,辺数m,a->bの辺がコストcを持つようなグラフ作成  
-・add_edge(int from,int to,X cost)  
+### ・add_edge(int from,int to,X cost)  
 ->頂点fromから頂点toにコストcostの辺を張る  
 
-・dijkstra(int s)  
+### ・dijkstra(int s)  
 -> 頂点sから各頂点への最短経路をダイクストラ法で求める。計算量はO(mlog(n))。  
-・bellmanford(int s)  
+### ・bellmanford(int s)  
 -> 頂点sから各頂点への最短経路をベルマンフォード法で求める。また負閉路を検出したらfalseを返す。計算量はO(mn)。  
-・wf()  
+### ・wf()  
 -> 全頂点間の最短経路をWarshall-Floyd法で求める。計算量はO(n^3)。
 
-・solve_nibu()  
+### ・solve_nibu()  
 ->二部グラフ判定。二部グラフであればtrue。  
-・get_color(int v)  
+### ・get_color(int v)  
 ->彩色後、頂点vの色をチェックする。
 
 <details>
