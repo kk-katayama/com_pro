@@ -1,6 +1,7 @@
 #include <iostream>
 #include <algorithm>
 #include <vector>
+#include <cmath>
 #define rep(i,n) for(int i=0;i<n;++i)
 #define rep1(i,n) for(int i=1;i<=n;++i)
 using namespace std;
@@ -14,8 +15,8 @@ struct Matrix
   Matrix(int _row,int _col){
     row = _row;
     col = _col;
-    mat.resize(row);
-    rep(i,row) mat[i].assign(col,0);
+    mat.resize(row,vector<X>(col,0));
+    //    rep(i,row) mat[i].assign(col,0);
   }
 
   Matrix(vector<vector<X>> _mat){
@@ -53,10 +54,6 @@ struct Matrix
     return res;
   }
 
-  vector<X>& operator [] (int i){
-    return mat[i];
-  }
-  
   Matrix pow(int n){
     Matrix A = mat;
     Matrix B(col,col);
@@ -79,31 +76,62 @@ struct Matrix
   }
   
   
-  
 };
+
+vector<vector<int>> Gauss_Jordan(vector<vector<int>> & A,vector<int>& b){
+  int n = A.size();
+  int m = A[0].size();
+  vector<vector<int>> B(n,vector<int>(m+1));
+
+  rep(i,n) rep(j,m) B[i][j] = A[i][j];
+  rep(i,n) B[i][m] = b[i];
+
+  rep(j,n){
+    int pivot = j;
+    for(int k=j;k<n;++k){
+      if(abs(B[k][j]) > abs(B[pivot][j])) pivot = k;
+    }
+    if(pivot!=j){
+      rep(l,m){
+	B[j][l] = (B[j][l]+B[pivot][l])%2;
+      }
+    }
+    for(int k=j+1;k<n;++k){
+      if(B[k][j]==0) continue;
+      rep(l,m){
+	B[k][l] = (B[k][l]+B[j][l])%2;
+      }
+    }
+    // Matrix<int> cc(B);
+    // cc.print();
+    // cout << "******************" << "\n";
+  }
+
+  return B;
+}
+
 int main()
 {
-  vector<vector<int>> a{ {1,2,3} , {4,5,6} };
-  vector<vector<int>> b{ {1,2} , {3,4} , {5,6} };
+  int n;
+  cin >> n;
+  vector<ll> a(n);
+  rep(i,n){
+    cin >> a[i];
+  }
+
+  ll res = 0;
+  vector<vector<int>> A(60);
+  rep(i,n){
+    int cnt = __builtin_popcountll(A[i]);
+
+    
+  }
+
+  vector<int> b(n,1);
+  vector<vector<int>> B = Gauss_Jordan(a,b);
+
   
-  Matrix<int> mata(a);
-  Matrix<int> matb(b);
-
-  Matrix<int> matc = mata * matb;
-  
-  mata.print();
-  matb.print();
-  matc.print();  
-
-  vector<vector<int>> d{{1,2},{3,4}};
-
-  Matrix<int> matd(d);
-
-  matd = matd.pow(2);
-
-  matd.print();
-
-
   
   return 0;
 }
+

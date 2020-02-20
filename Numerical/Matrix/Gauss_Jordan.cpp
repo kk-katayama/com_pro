@@ -16,7 +16,6 @@ struct Matrix
     row = _row;
     col = _col;
     mat.resize(row,vector<X>(col,0));
-    //    rep(i,row) mat[i].assign(col,0);
   }
 
   Matrix(vector<vector<X>> _mat){
@@ -54,6 +53,14 @@ struct Matrix
     return res;
   }
 
+  vector<X>& operator [] (int i){
+    return mat[i];
+  }
+
+  int size() const{
+    return mat.size();
+  }
+  
   Matrix pow(int n){
     Matrix A = mat;
     Matrix B(col,col);
@@ -78,86 +85,84 @@ struct Matrix
   
 };
 const double EPS = 1e-8;
-vector<double> Gauss_Jordan(vector<vector<double>>& A,vector<double>& b){
-  int n = A.size();
-  vector<vector<double>> B(n,vector<double>(n+1));
+template<class X> int GaussJordan(Matrix<X> &A,bool flag=false){
+  int m = A.size(),n = A[0].size(); // m row and n col
+  int rank = 0;
+  rep(col,n){
+    // 拡大係数行列は最後の列を掃き出さない
+    if(flag&&col==n-1) break; 
 
-  rep(i,n) rep(j,n) B[i][j] = A[i][j];
-  rep(i,n) B[i][n] = b[i];
-
-  rep(i,n){
-    int pivot = i;
-    for(int k=i;k<n;++k){
-      if(abs(B[k][i]) > abs(B[pivot][i])) pivot = k;
-    }
-    swap(B[i],B[pivot]);
-
-    if(abs(B[i][i]) < EPS) return vector<double>();
-
-    for(int k=i+1;k<=n;++k) B[i][k] /= B[i][i];
-    rep(j,n){
-      if(i!=j){
-	for(int k=i+1;k<=n;++k) B[j][k] -= B[j][i]*B[i][k];
+    // find pivot
+    int pivot = -1;
+    X ma = EPS;
+    for(int row=rank;row<m;++row){
+      if(abs(A[row][col])>ma){
+	ma = abs(A[row][col]);
+	pivot = row;
       }
     }
+
+    // if there is no pivot, go next col.
+    if(pivot==-1) continue;
+
+    // swap row
+    swap(A[pivot],A[rank]);
+
+    // cahnge pivot's value to 1
+    auto fac = A[rank][col];
+    rep(col2,n) A[rank][col2] /= fac;
+
+    // sweep out col that has pivot
+    rep(row,m){
+      if(row!=rank&&abs(A[row][col])>EPS){
+	auto fac = A[row][col];
+	rep(col2,n){
+	  A[row][col2] -= A[rank][col2]*fac;
+	}
+      }
+    }
+    rank++;
+    A.print();
   }
-
-  vector<double> res(n);
-  rep(i,n) res[i] = B[i][n];
-  return res;
+  return rank;
 }
-vector<vector<double>> Gauss_Jordan(vector<vector<double>>& A,vector<vector<double>>& b){
-  int n = A.size();
-  vector<vector<double>> B(n,vector<double>(2*n,0));
 
-  rep(i,n) rep(j,n) B[i][j] = A[i][j];
-  rep(i,n) rep(j,n) B[i][j+n] = b[i][j];
+template<class X> vector<X> linear_eq(Matrix<X> A,vector<X> b){
+  // extend
+  int m = A.size(),n = A[0].size();
+  Matrix<X> B(m,n+1);
+  rep(row,m){
+    rep(col,n+1) B[row][col] = A[row][col];
+    B[row][n] = b[row];
+  }
+  int rank = GaussJordan(B,true);
   
-  rep(i,n){
-    int pivot = i;
-    for(int k=i;k<n;++k){
-      if(abs(B[k][i]) > abs(B[pivot][i])) pivot = k;
-    }
-    swap(B[i],B[pivot]);
-
-
-    if(abs(B[i][i]) < EPS) return vector<vector<double>>(n,vector<double>(n,-1));
-
-    for(int k=i+1;k<2*n;++k) B[i][k] /= B[i][i];
-    rep(j,n){
-      if(i!=j){
-	for(int k=i+1;k<2*n;++k) B[j][k] -= B[j][i]*B[i][k];
-      }
-    }
-   
-  }
-
-  vector<vector<double>> res(n,vector<double>(n));
-  rep(i,n) rep(j,n) res[i][j] = B[i][j+n];
+  vector<X> res;
+  for(int row=rank;row<m;++row) if(abs(B[row][n])>EPS) return res;
+  
+  res.assign(n,0);
+  rep(col,rank) res[col] = B[col][n];
   return res;
 }
-
-
-
 
 int main()
 {
-  // int n;
-  // cin >> n;
-  // vector<vector<double>> A(n,vector<double>(n));
-  // rep(i,n) rep(j,n) cin >> A[i][j];
-  // vector<double> b(n);
-  // rep(i,n) cin >> b[i];
-  int n;
-  cin >> n;
-  vector<vector<double>> A(n,vector<double>(n));
-  rep(i,n) rep(j,n) cin >> A[i][j];
-  vector<vector<double>> b(n,vector<double>(n));
-  rep(i,n) rep(j,n) cin >> b[i][j];
+  int n,m;
+  cin >> n >> m;
+  vector<vector<double>> mat(n,vector<double>(m));
+  rep(i,n){
+    rep(j,m){
+      cin >> mat[i][j];
+    }
+  }
 
-  vector<vector<double>> res = Gauss_Jordan(A,b);
-  Matrix<double> x(res);
-  x.print();
+  vector<double> b(n);
+  rep(i,n){
+    cin >> b[i];
+  }
+  Matrix<double> A(mat);
+
+  linear_eq(A,b);
   
   return 0;
 }
