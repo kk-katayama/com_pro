@@ -5,8 +5,8 @@ using namespace std;
 //k以下である要素の個数を求める
 int n;
 int a[110000];
-int cntltk(int l,int r,int k){
-  int lb=l-1,ub=r+1;
+int cntltk(int k){
+  int lb=-1,ub=n;
   while(ub-lb>1){
     int mid=(lb+ub)/2;
     if(a[mid]<=k) lb=mid;
@@ -21,6 +21,6 @@ int main()
   cin >> n >> k;
   rep(i,n) cin >> a[i];
   sort(a,a+n);
-  cout << cntltk(0,n-1,k) << "\n";
+  cout << cntltk(k) << "\n";
   return 0;
 }
