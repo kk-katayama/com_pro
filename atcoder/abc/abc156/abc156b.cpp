@@ -6,9 +6,13 @@
 using namespace std;
 int main()
 {
-  int x,y;
-  cin >> x >> y;
-  if(x<y) cout << "Better" << "\n";
-  else cout << "Worse" << "\n";
+  int n,k;
+  cin >> n >> k;
+  int res=0;
+  while(n>0){
+    n /= k;
+    res++;
+  }
+  cout << res << "\n";
   return 0;
 }

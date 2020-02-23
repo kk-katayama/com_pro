@@ -6,9 +6,9 @@
 using namespace std;
 int main()
 {
-  int x,y;
-  cin >> x >> y;
-  if(x<y) cout << "Better" << "\n";
-  else cout << "Worse" << "\n";
+  int n,r;
+  cin >> n >> r;
+  if(n>=10) cout << r << "\n";
+  else cout << r + 100*(10-n) << "\n";
   return 0;
 }
