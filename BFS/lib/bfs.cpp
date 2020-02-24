@@ -27,7 +27,7 @@ struct Graph
     d.assign(node,-1);
     queue<int> q;
     d[s] = 0;
-    q.pudh(s);
+    q.push(s);
     while(!q.empty()){
       int v = q.front();
       q.pop();
