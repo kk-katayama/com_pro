@@ -15,6 +15,39 @@ int upper_bound(int k){
   }
   return right;
 }
+//kより大きい要素のうち最小のもののインデックスを求める
+int upper_bound(int k){
+  int left=-1,right=n;
+  while(right-left>1){
+    int mid=(right+left)/2;
+    if(a[mid]>k) right=mid;
+    else left=mid;
+  }
+  return right;
+}
+
+//k以上である要素のうち最小のものを求める
+int n;
+int a[110000];
+int upper_bound(int k){
+  int left=-1,right=n;
+  while(right-left>1){
+    int mid=(right+left)/2;
+    if(a[mid]>=k) right=mid;
+    else left=mid;
+  }
+  return a[right];
+}
+//kより大きい要素のうち最小のものを求める
+int upper_bound(int k){
+  int left=-1,right=n;
+  while(right-left>1){
+    int mid=(right+left)/2;
+    if(a[mid]>k) right=mid;
+    else left=mid;
+  }
+  return a[right];
+}
 
 int main()
 {
