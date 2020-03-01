@@ -6,6 +6,12 @@
 using namespace std;
 int main()
 {
-  
+  int n,k;cin >> n >> k;
+  int res=0;
+  rep(i,n){
+    int h;cin >> h;
+    if(h>=k) res++;
+  }
+  cout << res << "\n";
   return 0;
 }
