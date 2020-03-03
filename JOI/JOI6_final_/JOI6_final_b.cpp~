@@ -6,19 +6,6 @@
 using namespace std;
 int main()
 {
-  int a=0,b=0;
-  rep(i,4){
-    int x;
-    cin >> x;
-    a+=x;
-  }
-  rep(i,4){
-    int x;
-    cin >> x;
-    b+=x;
-  }
 
-  cout << (int)max(a,b) << "\n";
-  
   return 0;
 }
