@@ -5,7 +5,7 @@
 #define rep1(i,n) for(int i=1;i<=n;++i)
 using namespace std;
 typedef long long ll;
-// 区間更新クエリ
+// 区間更新、区間最小クエリ
 template <typename F,typename T>
 struct DST{
   T identity;
@@ -107,7 +107,7 @@ int main()
   rep(i,q){
     cin >> c[i];
     if(c[i]==0) cin >> s[i] >> t[i] >> x[i];
-    else cin >> x[i];
+    else cin >> s[i] >> t[i];
   }
 
   auto f = [&](ll a,ll b){ return min(a,b);};
@@ -116,7 +116,7 @@ int main()
   dst.init(n);
   rep(i,q){
     if(c[i]==0) dst.update(s[i],t[i]+1,x[i],0,0,dst.size);
-    else cout << dst.query(x[i],x[i]+1,0,0,dst.size) << "\n";
+    else cout << dst.query(s[i],t[i]+1,0,0,dst.size) << "\n";
   }
   
   return 0;

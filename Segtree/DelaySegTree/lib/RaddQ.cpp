@@ -5,7 +5,7 @@
 #define rep1(i,n) for(int i=1;i<=n;++i)
 using namespace std;
 typedef long long ll;
-// 区間更新クエリ
+// 区間加算クエリ
 template <typename F,typename T>
 struct DST{
   T identity;
@@ -16,12 +16,13 @@ struct DST{
   DST(F f,T id):merge(f),identity(id){}
 
   void eval(int k,int l,int r){
-    if(delay[k] != -1){
-      dat[k] = delay[k];
+    if(delay[k] != 0){
+      dat[k] += delay[k];
       if(k<size-1){
-	delay[2*k+1] = delay[2*k+2] = delay[k];
+	delay[2*k+1] += delay[k]/2;
+	delay[2*k+2] += delay[k]/2;	
       }
-      delay[k]=-1;
+      delay[k]=0;
     }
   }
 
@@ -29,7 +30,7 @@ struct DST{
     size = 1;
     while(size<=n) size *= 2;
     dat.resize(size*2-1,identity);
-    delay.resize(size*2-1,-1);    
+    delay.resize(size*2-1,0);    
   }
 
   void build(vector<T> vec){
@@ -47,7 +48,7 @@ struct DST{
 
     if(r<=a||b<=l) return ;
     if(a<=l&&r<=b){
-      delay[k] = x;
+      delay[k] += (r-l)*x;
       eval(k,l,r);
     }
     else{
@@ -110,8 +111,8 @@ int main()
     else cin >> x[i];
   }
 
-  auto f = [&](ll a,ll b){ return min(a,b);};
-  ll id = (1LL<<31)-1;
+  auto f = [&](ll a,ll b){ return a+b;};
+  ll id = 0;
   DST<decltype(f),ll> dst(f,id);
   dst.init(n);
   rep(i,q){

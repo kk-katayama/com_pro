@@ -5,7 +5,7 @@
 #define rep1(i,n) for(int i=1;i<=n;++i)
 using namespace std;
 typedef long long ll;
-// 区間更新クエリ
+// 区間加算、区間最小クエリ
 template <typename F,typename T>
 struct DST{
   T identity;
@@ -16,12 +16,13 @@ struct DST{
   DST(F f,T id):merge(f),identity(id){}
 
   void eval(int k,int l,int r){
-    if(delay[k] != -1){
-      dat[k] = delay[k];
+    if(delay[k] != 0){
+      dat[k] += delay[k];
       if(k<size-1){
-	delay[2*k+1] = delay[2*k+2] = delay[k];
+	delay[2*k+1] += delay[k];
+	delay[2*k+2] += delay[k];	
       }
-      delay[k]=-1;
+      delay[k]=0;
     }
   }
 
@@ -29,7 +30,7 @@ struct DST{
     size = 1;
     while(size<=n) size *= 2;
     dat.resize(size*2-1,identity);
-    delay.resize(size*2-1,-1);    
+    delay.resize(size*2-1,0);    
   }
 
   void build(vector<T> vec){
@@ -47,7 +48,7 @@ struct DST{
 
     if(r<=a||b<=l) return ;
     if(a<=l&&r<=b){
-      delay[k] = x;
+      delay[k] += x;
       eval(k,l,r);
     }
     else{
@@ -85,6 +86,7 @@ struct DST{
       num *= 2;
       index = index*2+1;
     }
+    cout << "************************\n";
     index = 0;
     num = 1;
     while(index<size){
@@ -95,8 +97,9 @@ struct DST{
       num *= 2;
       index = index*2+1;
     }
+    cout << "************************\n";      
   }
-  
+
 
   
 };
@@ -107,16 +110,19 @@ int main()
   rep(i,q){
     cin >> c[i];
     if(c[i]==0) cin >> s[i] >> t[i] >> x[i];
-    else cin >> x[i];
+    else cin >> s[i] >> t[i];
   }
-
+  
   auto f = [&](ll a,ll b){ return min(a,b);};
-  ll id = (1LL<<31)-1;
+  ll id = (1LL<<60);
   DST<decltype(f),ll> dst(f,id);
   dst.init(n);
+  vector<ll> vec(n,0);
+  dst.build(vec);
   rep(i,q){
     if(c[i]==0) dst.update(s[i],t[i]+1,x[i],0,0,dst.size);
-    else cout << dst.query(x[i],x[i]+1,0,0,dst.size) << "\n";
+    else cout << dst.query(s[i],t[i]+1,0,0,dst.size) << "\n";
+    //    dst.show();
   }
   
   return 0;
