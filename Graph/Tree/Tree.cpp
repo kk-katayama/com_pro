@@ -4,7 +4,6 @@ private:
   int m;//number of edge
   int root;
   const int max_log_n = 20;//if n = 10^5, max_log_n = 20.
-  bool flag;// if edge has cost, flag is true.
   vector<vector<int>> edge;// edge does not have cost.
   vector<vector<int>> par;//par[v][i] := vertex followed parent at 2^i times from vertex v.
   vector<int> depth;//depth of the node
@@ -43,7 +42,6 @@ public:
   }
 
   Tree(int n_,int m_,vector<int> a,vector<int> b){
-    flag = false;
     n = n_;
     m = m_;
     edge.resize(n);
@@ -54,7 +52,6 @@ public:
   }
 
   Tree(int n_,int m_,vector<int> a,vector<int> b,vector<int> c){
-    flag = true;
     n = n_;
     m = m_;
     edge2.resize(n);

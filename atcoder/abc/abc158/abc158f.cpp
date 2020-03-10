@@ -5,7 +5,7 @@
 #define rep1(i,n) for(int i=1;i<=n;++i)
 using namespace std;
 typedef long long ll;
-const ll MOD=1e+9+7;
+const ll MOD=998244353;
 struct mint{
   ll x;
   mint(ll x=0):x(x%MOD){}
@@ -53,34 +53,44 @@ struct mint{
     return res/=a;
   }
 };
-
-int h,w;
-int a[1100][1100];
-vector<int> dx={1,0,-1,0};
-vector<int> dy={0,1,0,-1};
-mint dp[1100][1100];
-
-mint dfs(int x,int y){
-  if(dp[x][y].x>0) return dp[x][y];
-  mint res(1);
-  rep(i,4){
-    int nx = x + dx[i];
-    int ny = y + dy[i];
-    if(nx>=0&&nx<h&&ny>=0&&ny<w){
-      if(a[x][y]>a[nx][ny]) res += dfs(nx,ny);
-    }
+int n;
+pair<int,int> p[110000];
+int cntltk(int k){
+  int lb=-1,ub=n;
+  while(ub-lb>1){
+    int mid=(lb+ub)/2;
+    if(p[mid].first<k) lb=mid;
+    else ub=mid;
   }
-  return dp[x][y] = res;
+  return lb+1;
 }
+int cntltk2(int k){
+  int lb=-1,ub=n;
+  while(ub-lb>1){
+    int mid=(lb+ub)/2;
+    if(p[mid].first<=k) lb=mid;
+    else ub=mid;
+  }
+  return lb+1;
+}
+
+
 
 int main()
 {
-  cin >> h >> w;
-  rep(i,h) rep(j,w) cin >> a[i][j];
-  mint res;
-  rep(i,h) rep(j,w){
-    res += dfs(i,j);
+  cin >> n;
+  rep(i,n){
+    int x,d;cin >> x >> d;
+    p[i] = {x,d};
+  }
+  sort(p,p+n);
+  mint two(2);
+  mint res = two.pow(n);
+  rep(i,n){
+    int x = cntltk(p[i].first+p[i].second) - cntltk2(p[i].first);
+    res -= two.pow(x)-(mint)1;
   }
   cout << res.x << "\n";
+  
   return 0;
 }

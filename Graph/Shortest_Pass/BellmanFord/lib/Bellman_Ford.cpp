@@ -5,75 +5,57 @@
 #define rep(i,n) for(int i=0;i<n;++i)
 #define rep1(i,n) for(int i=1;i<=n;++i)
 using namespace std;
-typedef long long ll;
-const ll infl = 1LL<<60;
-template <typename X>
-struct BellmanFord{
-  int node;
-  vector<vector<pair<int,X>>> edge;
-  vector<X> d;
+template<typename X>
+class Graph{
+private:
+  int n;// 頂点数
+  int m;// 辺の数
+  vector<vector<pair<int,X>>> edge;// コスト付きの辺
+  vector<X> d; 
+public:
+  // 頂点数_nのグラフを作成
+  Graph(int _n){ n = _n; edge.resize(n);  }
 
-  BellmanFord(int _n){
-    node = _n;
-    d.assign(node,-infl);
-    edge.resize(node);
+  // 辺コストありのグラフ作成、_n頂点、_m辺、a[i]->b[i]のコストc[i]の辺がある。
+  Graph(int _n,int _m,vector<int> a,vector<int> b,vector<X> c){
+    n = _n;m = _m;edge.resize(n);
+    rep(i,m){
+      edge[a[i]].push_back({b[i],c[i]});
+      edge[b[i]].push_back({a[i],c[i]}); //無向グラフ
+    }
+  }  
+
+  void add_edge(int from,int to,X cost){ edge[from].push_back({to,cost});}
+
+  //ベルマンフォード法。頂点sから全頂点への最短距離。負閉路を見つけるとfalseを返す。
+  bool bellmanford(int s){
+    d.assign(n,inf);
+    d[s] = 0;
+    bool flag = true;
+    rep(i,n){
+      rep(v,n){
+	if(d[v]==inf) continue;
+	for(auto w:edge[v]){
+	  if(d[w.first]>d[v] + w.second){
+	    d[w.first] = d[v] + w.second;
+	    if(i==n-1){
+	      flag = false;
+	    }
+	  }
+	}
+      }
+    }
+    return flag;
   }
   
-  //辺の追加
-  void add_edge(int from,int to,X cost){
-    edge[from].push_back(make_pair(to,cost));
-  }
- 
-  void bellmanford(int s){
-    d[s] = 0;
-    rep(i,node-1){
-      rep(j,node){
-	if(d[j]==-infl) continue;
-	for(auto& k:edge[j]){
-	  d[k.first] = max(d[k.first],d[j]+k.second);
-	}
-      }
-    }
-    
-    vector<bool> pos(node,0);
-    rep(i,node){
-      rep(j,node){
-	if(d[j]==-infl) continue;
-	for(auto& k:edge[j]){
-	  if(d[k.first]<d[j]+k.second){
-	    pos[k.first] = true;
-	    d[k.first] = d[j] + k.second;
-	  }
-	  if(pos[j]) pos[k.first] = true; 
-	}
-      }
-    }
 
-    rep(i,node) if(pos[i]) d[i] = infl;
-    
-  }
-
+  
 };
+
+
 int main()
 {
-  int n,m;
-  cin >> n >> m;
-  vector<int> a(m),b(m);
-  vector<ll> c(m);
-  rep(i,m){
-    cin >> a[i] >> b[i] >> c[i];
-    a[i]--;
-    b[i]--;
-  }
 
-  BellmanFord<ll> bf(n);
-
-  rep(i,m) bf.add_edge(a[i],b[i],c[i]);
-
-  bf.bellmanford(0);
-
-  if(bf.d[n-1]!=infl) cout << bf.d[n-1] << "\n";
-  else cout << "inf" << "\n";
   return 0;
 }
 

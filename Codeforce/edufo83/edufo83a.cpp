@@ -6,7 +6,12 @@
 using namespace std;
 int main()
 {
-  int a,d;cin >> a >> d;
-  cout << (int)max((a+1)*d,a*(d+1)) << "\n";
+  int t;cin >> t;
+  vector<int> n(t),m(t);
+  rep(i,t) cin >> n[i] >> m[i];
+  rep(i,t){
+    if(n[i]%m[i]==0) cout << "YES" << "\n";
+    else cout << "NO" << "\n";
+  }
   return 0;
 }

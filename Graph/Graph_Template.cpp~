@@ -1,0 +1,5 @@
+template<typename X>
+class Graph{
+  
+
+};

@@ -1,0 +1,41 @@
+#include <iostream>
+#include <algorithm>
+#include <vector>
+#include <string>
+#include <map>
+#define rep(i,n) for(int i=0;i<n;++i)
+#define rep1(i,n) for(int i=1;i<=n;++i)
+using namespace std;
+typedef long long ll;
+int main()
+{
+  int n,p; cin >> n >> p;
+  string s;cin >> s;
+  //  vector<vector<ll>> dp(n+1,vector<ll>(p,0));
+  ll res = 0;
+  map<int,ll> mp1;
+  rep(i,n){
+    map<int,ll> mp2;
+    int c = s[i] - '0';
+    mp2[c%p] = 1;
+    //    dp[i+1][c%p]++;
+    // rep(j,p){
+    //   if(j==0) res += dp[i][j];
+    //   dp[i+1][(j*10+c)%p] += dp[i][j];
+    // }
+    for(auto it=mp1.begin();it!=mp1.end();it++){
+      mp2[((it->first)*10+c)%p] += it->second;
+    }
+    res += mp2[0];
+    mp1 = mp2;
+    //    cout << res << " "  << i << "\n";
+  }
+  cout << res << "\n";
+  // rep(i,n+1){
+  //   rep(j,p){
+  //     cout << dp[i][j] << " ";
+  //   }
+  //   cout  << "\n";
+  // }
+  return 0;
+}

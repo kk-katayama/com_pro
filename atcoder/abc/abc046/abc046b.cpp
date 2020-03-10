@@ -6,7 +6,9 @@
 using namespace std;
 int main()
 {
-  int a,d;cin >> a >> d;
-  cout << (int)max((a+1)*d,a*(d+1)) << "\n";
+  int n,k;cin >> n >> k;
+  int res = k;
+  rep(i,n-1) res *= (k-1);
+  cout << res << "\n";
   return 0;
 }

@@ -6,7 +6,12 @@
 using namespace std;
 int main()
 {
-  int a,d;cin >> a >> d;
-  cout << (int)max((a+1)*d,a*(d+1)) << "\n";
+  int R,G,B,n;cin >> R >> G >> B >> n;
+  int res=0;
+  rep(r,3001) rep(g,3001){
+    if(n-r*R-g*G<0) break;
+    if((n-r*R-g*G)%B==0) res++;
+  }
+  cout << res << "\n";
   return 0;
 }

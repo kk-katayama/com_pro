@@ -6,7 +6,13 @@
 using namespace std;
 int main()
 {
-  int a,d;cin >> a >> d;
-  cout << (int)max((a+1)*d,a*(d+1)) << "\n";
+  int a,b;cin >> a >> b;
+  rep1(i,10000){
+    if(8*i/100==a&&i/10==b){
+      cout << i << "\n";
+      return 0;
+    }
+  }
+  cout << -1 << "\n";
   return 0;
 }
