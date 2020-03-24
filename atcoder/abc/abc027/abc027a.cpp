@@ -1,15 +1,15 @@
 #include <iostream>
 #include <algorithm>
 #include <vector>
-#include <string>
 #define rep(i,n) for(int i=0;i<n;++i)
 #define rep1(i,n) for(int i=1;i<=n;++i)
 using namespace std;
 int main()
 {
-  string a,b;cin >> a >> b;
-  a += b;
-  int res = stoi(a) * 2;
-  cout << res << "\n";
+  vector<int> a(3);
+  rep(i,3) cin >> a[i];
+  sort(a.begin(), a.end());
+  if(a[0]==a[1]) cout << a[2] << "\n";
+  else if(a[1]==a[2]) cout << a[0] << "\n";
   return 0;
 }

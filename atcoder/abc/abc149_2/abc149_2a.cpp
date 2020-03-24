@@ -7,9 +7,8 @@
 using namespace std;
 int main()
 {
-  string a,b;cin >> a >> b;
-  a += b;
-  int res = stoi(a) * 2;
-  cout << res << "\n";
+  string s,t;cin >> s >> t;
+  t += s;
+  cout << t << "\n";
   return 0;
 }

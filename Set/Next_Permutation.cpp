@@ -12,7 +12,8 @@ int main()
   rep(i,n) cin >> vec[i];
 
   sort(vec.begin(), vec.end());
-  
+
+  // vectorの全並び替えを全探索
   do{
     // rep(i,n) cout << vec[i] << " ";
     // cout  << "\n";

@@ -7,9 +7,10 @@
 using namespace std;
 int main()
 {
-  string a,b;cin >> a >> b;
-  a += b;
-  int res = stoi(a) * 2;
-  cout << res << "\n";
+  string s;cin >> s;
+  int x = stoi(s);
+  cout << x << "\n";  
+  x *= 2;
+  cout << x << "\n";
   return 0;
 }

@@ -15,11 +15,16 @@ int main()
   rep(i,n) sum[i+1] = sum[i] + a[i];
   map<ll,ll> mp;
   rep(i,n+1) mp[sum[i]]++;
-  ll res = 0;
-  rep(i,n+1){
-    mp[sum[i]]--;
-    res += mp[sum[i]];
+  ll res2 = 0;
+  for(auto m:mp){
+    res2 += m.second*(m.second-1)/2;
   }
-  cout << res << "\n";
+  cout << res2 << "\n";
+  // ll res = 0;
+  // rep(i,n+1){
+  //   mp[sum[i]]--;
+  //   res += mp[sum[i]];
+  // }
+  // cout << res << "\n";
   return 0;
 }

@@ -7,9 +7,11 @@
 using namespace std;
 int main()
 {
-  string a,b;cin >> a >> b;
-  a += b;
-  int res = stoi(a) * 2;
-  cout << res << "\n";
+  string s;cin >> s;
+  double d = stod(s);
+  printf("%.7f\n", d);
+  d *= 2;
+  printf("%.7f\n", d);
+  
   return 0;
 }

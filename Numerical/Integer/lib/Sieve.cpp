@@ -1,51 +1,22 @@
-//Sieve of Eratosthenes,
-template<typename X>
-class Sieve{
-private:
-  X x;
-  vector<bool> prime;
-public:
-  Sieve(X _x){
-    x = _x;
-    prime.assign(x+1,true);
-  }
-
-  void init(){
-    prime[0] = prime[1] = false;
-    for(X i=2;i<=n;++i){
-      if(prime[i]){
-	X b = i*2;
-      }
-      while(b<=x){
-	prime[b] = false;
-	b += i;
+// エラストテネスの篩
+const int NMAX = 1e+6+1;
+int prime[NMAX];
+void Sieve(){
+  rep(i,NMAX) prime[i] = true;
+  prime[0] = prime[1] = false;
+  for(int i=2;i<NMAX;++i){
+    if(prime[i]){
+      int j = i;
+      while(j<=NMAX){
+	prime[j] = false;
+	j += i;
       }
     }
   }
+}
 
-  int count(){
-    int res=0;
-    rep(i,x+1){
-      if(prime[i]){
-	res++;
-      }
-    }
-    return res;
-  }
 
-  vector<X> all(){
-    vector<X> res;
-    rep(i,x+1){
-      if(prime[i]){
-	res.push_back(i);
-      }
-    }
-    return res;
-  }
 
-  bool is_prime(X n){
-    return prime[n];
-  }
-  
-  
-};
+
+
+
