@@ -7,13 +7,13 @@ using namespace std;
 int main()
 {
   int n;cin >> n;
-  n = 1000 - n;
-  int res = 0;
-  vector<int> c = {500 , 100 , 50 , 10 , 5 , 1};
-  rep(i,6){
-    res += n / c[i];
-    n = n % c[i];
+  vector<int> d(n);
+  rep(i,n) cin >> d[i];
+  int sum = 0;
+  rep(i,n) rep(j,n){
+    if(i >= j)continue;
+    sum += d[i] * d[j];
   }
-  cout << res << "\n";
+  cout << sum << "\n";
   return 0;
 }

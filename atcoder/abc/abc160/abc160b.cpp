@@ -4,16 +4,14 @@
 #define rep(i,n) for(int i=0;i<n;++i)
 #define rep1(i,n) for(int i=1;i<=n;++i)
 using namespace std;
+typedef long long ll;
 int main()
 {
-  int n;cin >> n;
-  n = 1000 - n;
-  int res = 0;
-  vector<int> c = {500 , 100 , 50 , 10 , 5 , 1};
-  rep(i,6){
-    res += n / c[i];
-    n = n % c[i];
-  }
+  ll n;cin >> n;
+  ll res = 0;
+  res += (n / 500) * 1000;
+  n = n % 500;
+  res += (n / 5) * 5;
   cout << res << "\n";
   return 0;
 }

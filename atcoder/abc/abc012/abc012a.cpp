@@ -6,14 +6,7 @@
 using namespace std;
 int main()
 {
-  int n;cin >> n;
-  n = 1000 - n;
-  int res = 0;
-  vector<int> c = {500 , 100 , 50 , 10 , 5 , 1};
-  rep(i,6){
-    res += n / c[i];
-    n = n % c[i];
-  }
-  cout << res << "\n";
+  int a,b;cin >> a >> b;
+  cout << b << " " << a << "\n";
   return 0;
 }

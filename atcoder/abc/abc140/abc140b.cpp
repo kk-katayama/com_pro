@@ -7,12 +7,16 @@ using namespace std;
 int main()
 {
   int n;cin >> n;
-  n = 1000 - n;
+  vector<int> a(n),b(n),c(n-1);
+  rep(i,n){ cin >> a[i];a[i]--;}
+  rep(i,n) cin >> b[i];
+  rep(i,n-1) cin >> c[i];
   int res = 0;
-  vector<int> c = {500 , 100 , 50 , 10 , 5 , 1};
-  rep(i,6){
-    res += n / c[i];
-    n = n % c[i];
+  rep(i,n){
+    res += b[a[i]];
+    if(i != n - 1){
+      if(a[i] + 1 == a[i+1]) res += c[a[i]];
+    }
   }
   cout << res << "\n";
   return 0;

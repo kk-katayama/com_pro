@@ -7,13 +7,9 @@ using namespace std;
 int main()
 {
   int n;cin >> n;
-  n = 1000 - n;
-  int res = 0;
-  vector<int> c = {500 , 100 , 50 , 10 , 5 , 1};
-  rep(i,6){
-    res += n / c[i];
-    n = n % c[i];
+  int m = 2025 - n;
+  rep1(i,9) rep1(j,9){
+    if( i * j == m ) cout << i << " x " << j << "\n";
   }
-  cout << res << "\n";
   return 0;
 }
