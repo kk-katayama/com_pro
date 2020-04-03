@@ -50,8 +50,7 @@ struct Graph{
 	  d[t] = d[w] + c;
 	  q.push(make_pair(d[t],t));
 	}
-      }
-    }
+          }
   }
   
 };
