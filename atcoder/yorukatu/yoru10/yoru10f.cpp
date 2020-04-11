@@ -54,7 +54,7 @@ struct mint{
   }
 };
 
-const int NMAX=100010; // we can calculate nCk until n is equal to NMAX
+const int NMAX=200010; // we can calculate nCk until n is equal to NMAX
 mint fact[NMAX],infac[NMAX];
 void Make_Fact(){
   fact[0]=fact[1]=1;
@@ -65,26 +65,30 @@ void Make_Fact(){
 void Make_InvFact(){
   infac[0]=infac[1]=1;
   for(int i=2;i<=NMAX-1;++i){
-    infac[i]=infac[i-1]/(mint)i;	
+    infac[i]=infac[i-1]/(mint)i;
   }
 }
 mint Comb(int n,int k){
   if(n<0||k<0||n-k<0) return 0;
   return fact[n]*infac[k]*infac[n-k];
 }
-int main()
-{
-  int n;
-  cin >> n;
-  Make_Fact();
-  Make_InvFact();
-  rep(i,n+1){
-    rep(j,n+1) {
-      if(i<j) continue;
-      cout << i << "C" << j << "is " << Comb(i,j).x << "\n";
-    }
-    cout << "\n";
-  }
-  return 0;
+
+mint f(int s, int t, int x, int y) {
+  return Comb(x - s + y - t, y - t);
 }
 
+int main()
+{
+  int h,w,a,b;cin >> h >> w >> a >> b;
+  Make_Fact();
+  Make_InvFact();
+  
+  mint res;
+  rep1(i,h-a) {
+    res += f(1, 1, i, b) * f(i, b+1, h, w);
+  }
+
+  cout << res.x << "\n";
+
+  return 0;
+}

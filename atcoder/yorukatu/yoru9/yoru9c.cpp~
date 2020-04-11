@@ -1,0 +1,43 @@
+#include <iostream>
+#include <algorithm>
+#include <vector>
+#include <string>
+#define rep(i,n) for(int i=0;i<n;++i)
+#define rep1(i,n) for(int i=1;i<=n;++i)
+using namespace std;
+int main()
+{
+  int n,m;cin >> n >> m;
+  vector<int> s(m), c(m);
+  rep(i,m){
+    cin >> s[i] >> c[i];
+    s[i]--;
+  }
+
+  bool f = true;
+  vector<int> res(n, -1);
+  rep(i,m) {
+    if(res[s[i]] >= 0) {
+      if(res[s[i]] != c[i] ) {
+	f = false;
+      }
+    }
+    else {
+      res[s[i]] = c[i];
+      if(s[i] == 0 && c[i] == 0) f = false;
+    }
+  }
+
+  if(f) {
+    rep(i,n) {
+      if(res[i] < 0) cout << 0;
+      else cout << res[i];
+    }
+    cout  << "\n";
+  }
+  else {
+    cout << -1 << "\n";
+  }
+  
+  return 0;
+}

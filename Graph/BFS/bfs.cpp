@@ -32,7 +32,7 @@ struct Graph
       int v = q.front();
       q.pop();
       for(auto &w:edge[v]){
-	if(f[w]>=0) continue;
+	if(d[w]>=0) continue;
 	d[w] = d[v] + 1;
 	q.push(w);
       }

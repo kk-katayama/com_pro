@@ -1,0 +1,136 @@
+#include <iostream>
+#include <algorithm>
+#include <vector>
+#include <map>
+#define rep(i,n) for(int i=0;i<n;++i)
+#define rep1(i,n) for(int i=1;i<=n;++i)
+using namespace std;
+template<typename X>
+class Graph{
+private:
+  int n;// 頂点数
+  int m;// 辺の数
+  vector<vector<pair<int,X>>> edge;// コスト付きの辺
+  vector<vector<int>> dp;
+  
+public:
+  // 頂点数_nのグラフを作成
+  Graph(int _n){ n = _n; edge.resize(n);  }
+  // 辺コストありのグラフ作成、_n頂点、_m辺、a[i]->b[i]のコストc[i]の辺がある。
+  Graph(int _n,int _m,vector<int> a,vector<int> b,vector<X> c){
+    n = _n;m = _m;edge.resize(n);
+    rep(i,m){
+      edge[a[i]].push_back({b[i],c[i]});
+      edge[b[i]].push_back({a[i],c[i]}); //有向グラフ
+    }
+  }  
+
+  // 辺の追加 コストあり
+  void add_edge(int from,int to,X cost){ edge[from].push_back({to,cost});}
+
+  void bitDP() {
+    dp.resize( (1 << n), vector<int>(n, 0) );
+    dp[0][0] = 1;
+    rep(mask, (1 << n) ) {
+      rep(i, n) {
+	if( mask == 0 && i == 0) {
+	  for(auto v : edge[i]) {
+	    if( (mask >> v.first) & 1) continue;
+	    bool f = true;
+	    for(auto x : v.second) {
+	      if( (mask >> x) & 1 ) f = false;
+	    }
+	    if(f) dp[ mask | (1 << v.first) ][v.first] += dp[mask][i];
+	  }	  
+	}
+	if( (mask >> i) & 1) {
+	  for(auto v : edge[i]) {
+	    if( (mask >> v.first) & 1) continue;
+	    bool f = true;
+	    for(auto x : v.second) {
+	      if( (mask >> x) & 1 ) f = false;
+	    }
+	    if(f) dp[ mask | (1 << v.first) ][v.first] += dp[mask][i];
+	  }
+	}
+      }
+    }
+    cout << dp[ (1 << n) - 1][0] << "\n";
+  }
+  
+};
+
+int main()
+{
+  int n,m; cin >> n >> m;
+  vector<vector<int>> s(m, vector<int>(n));
+  rep(i,m) rep(j,n) cin >> s[i][j];
+
+  int index = 1;
+  vector<pair<int,int>> p(n*m);
+  map<pair<int,int>,int> mp;
+  rep(i,m) {
+    rep(j,n) {
+      if(s[i][j] == 1) {
+	p[index] = {i, j};
+	mp[{i, j}] = index;
+	index++;
+      }
+      if(s[i][j] == 2) {
+	mp[{i, j}] = 0;
+	p[0] = {i, j};
+      }
+    }
+  }
+
+  vector<int> a, b;
+  vector<vector<int>> c;
+  rep(i,index) {
+    rep(j,index) {
+      if(i >= j) continue;
+      if(p[i].first == p[j].first) {
+	a.push_back(i); b.push_back(j);
+	vector<int> tmp;
+	if(p[i].second < p[j].second) {
+	  for(int k = p[i].second + 1;k < p[j].second;++k) {
+	    if(s[ p[i].first ][k] == 1) {
+	      tmp.push_back(mp[ {p[i].first, k} ]);
+	    }
+	  }
+	}
+	else {
+	  for(int k = p[j].second + 1;k < p[i].second;++k) {
+	    if(s[ p[i].first ][k] == 1) {
+	      tmp.push_back(mp[ {p[i].first, k} ]);
+	    }
+	  }	  
+	}
+	c.push_back(tmp);
+      }
+      else if(p[i].second == p[j].second) {
+	a.push_back(i); b.push_back(j);
+	vector<int> tmp;
+	if(p[i].first < p[j].first) {
+	  for(int k = p[i].first + 1;k < p[j].first;++k) {
+	    if(s[k][ p[i].second ] == 1) {
+	      tmp.push_back(mp[ {k, p[i].second} ]);
+	    }
+	  }
+	}
+	else {
+	  for(int k = p[j].first + 1;k < p[i].first;++k) {
+	    if(s[k][ p[i].second ] == 1) {
+	      tmp.push_back(mp[ {k, p[i].second} ]);
+	    }
+	  }
+	}
+	c.push_back(tmp);	
+      }
+    }
+  }
+
+  Graph<vector<int>> gp(index, a.size(), a, b, c);
+  gp.bitDP();
+  
+  return 0;
+}

@@ -5,7 +5,7 @@
 #define rep1(i,n) for(int i=1;i<=n;++i)
 using namespace std;
 typedef long long ll;
-const ll MOD=1e+9+7;
+const ll MOD=100000;
 struct mint{
   ll x;
   mint(ll x=0):x(x%MOD){}
@@ -54,37 +54,30 @@ struct mint{
   }
 };
 
-const int NMAX=100010; // we can calculate nCk until n is equal to NMAX
-mint fact[NMAX],infac[NMAX];
-void Make_Fact(){
-  fact[0]=fact[1]=1;
-  for(int i=2;i<=NMAX-1;++i){
-    fact[i]=fact[i-1]*(mint)i;
-  }
-}
-void Make_InvFact(){
-  infac[0]=infac[1]=1;
-  for(int i=2;i<=NMAX-1;++i){
-    infac[i]=infac[i-1]/(mint)i;	
-  }
-}
-mint Comb(int n,int k){
-  if(n<0||k<0||n-k<0) return 0;
-  return fact[n]*infac[k]*infac[n-k];
-}
+
 int main()
 {
-  int n;
-  cin >> n;
-  Make_Fact();
-  Make_InvFact();
-  rep(i,n+1){
-    rep(j,n+1) {
-      if(i<j) continue;
-      cout << i << "C" << j << "is " << Comb(i,j).x << "\n";
+  int h,w; cin >> h >> w;
+  mint dp[110][110][2][2];
+  rep(i,h) rep(j,w) rep(k,2) rep(l,2) dp[i][j][k][l].x = 0;
+  dp[0][1][1][1].x = 1;
+  dp[1][0][0][0].x = 1;  
+  rep(i,h) {
+    rep(j,w) {
+      if(i == 0 && j == 0) continue;
+      if(i+1 < h) {
+	rep(l,2) dp[i+1][j][0][0] += dp[i][j][0][l];
+	dp[i+1][j][0][1] += dp[i][j][1][1];
+      }
+      if(j+1 < w) {
+	rep(l,2) dp[i][j+1][1][1] += dp[i][j][1][l];
+	dp[i][j+1][1][0] += dp[i][j][0][0];
+      }      
     }
-    cout << "\n";
   }
+
+  mint res;
+  rep(k,2) rep(l,2) res += dp[h-1][w-1][k][l];
+  cout << res.x << "\n";
   return 0;
 }
-

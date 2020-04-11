@@ -65,26 +65,16 @@ void Make_Fact(){
 void Make_InvFact(){
   infac[0]=infac[1]=1;
   for(int i=2;i<=NMAX-1;++i){
-    infac[i]=infac[i-1]/(mint)i;	
+    infac[i]=infac[i-1]/(mint)i;
   }
 }
 mint Comb(int n,int k){
   if(n<0||k<0||n-k<0) return 0;
   return fact[n]*infac[k]*infac[n-k];
 }
+
 int main()
 {
-  int n;
-  cin >> n;
-  Make_Fact();
-  Make_InvFact();
-  rep(i,n+1){
-    rep(j,n+1) {
-      if(i<j) continue;
-      cout << i << "C" << j << "is " << Comb(i,j).x << "\n";
-    }
-    cout << "\n";
-  }
+
   return 0;
 }
-
