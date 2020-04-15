@@ -1,5 +1,5 @@
 // エラストテネスの篩
-const int NMAX = 1e+6+1;
+const int NMAX = 1e+5+1;
 int prime[NMAX];
 void Sieve(){
   rep(i,NMAX) prime[i] = true;
