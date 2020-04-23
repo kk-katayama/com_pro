@@ -1,22 +1,3 @@
-#include <iostream>
-#include <algorithm>
-#include <vector>
-#include <utility>
-#include <map>
-#define rep(i,n) for(int i=0;i<n;++i)
-#define rep1(i,n) for(int i=1;i<=n;++i)
-using namespace std;
-typedef long long ll;
-ll gcd(ll a,ll b){
-  if(b==0) return a;
-  return gcd(b,a%b);
-}
-// 最小公倍数
-ll lcm(ll a,ll b){
-  return a*b/gcd(a,b);
-}
-
-
 template<typename X>
 class Tree {
 private:
@@ -33,10 +14,6 @@ private:
   vector<int> depth; // depth[i] := 頂点iの深さ
   
 public:
-  Tree(int _n) {
-    n = _n;
-    edge.resize(n);
-  }
   // コンストラクタ
   Tree(int _n, vector<int> a, vector<int> b, vector<X> c) {
     n = _n;
@@ -60,9 +37,9 @@ public:
     int res = 1;
     for(auto w:edge[v]) {
       if(w.first == p) continue;
-      res += dfs_init(w.first, v, d + 1);
+      res += dfs(w.first, v, d + 1);
     }
-    return size[v] = res;
+    return size[w] = res;
   }
 
   // LCA用のテーブル作成
@@ -90,11 +67,11 @@ public:
   // 最小共通祖先(LCA)
   int lca(int u,int v){//Lowest Common Ancestor of u and v
     if(depth[u]>depth[v]) swap(u,v);
-    for(int i=MAX_LOGN-1;i>=0;--i){
+    for(int i=max_log_n-1;i>=0;--i){
       if( ((depth[v]-depth[u])>>i)&1 ) v = par[v][i];
     }
     if(u==v) return u;
-    for(int i=MAX_LOGN-1;i>=0;--i){
+    for(int i=max_log_n-1;i>=0;--i){
       if(par[u][i]!=par[v][i]){
 	u = par[u][i];
 	v = par[v][i];
@@ -108,80 +85,5 @@ public:
     int w = lca(u, v);
     return depth[u] + depth[v] - depth[w]*2;
   }
-
-  ll dfs(int v) {
-    ll res = 0;
-    ll l = 1;
-    for(auto w: edge[v]) {
-      if(par[v][0] == w.first) continue;
-      res += w.second;
-      l = lcm(l, dfs(w.first));
-    }
-    res *= l;
-    if(res == 0) return 1;
-    return res;
-  }
-  
-  void solve() {
-    int root;
-    rep(i,n) {
-      if(edge[i].size() == 2) {
-	root = i;
-	break;
-      }
-    }
-    init(root);
-    cout << dfs(root) << "\n";
-  }
-
-  void show() {
-    cout << "parent" << "\n";
-    rep(i,n) cout << i << ":" << par[i][0] << "\n";
-    cout << "depth" << "\n";
-    rep(i,n) cout << i << ":" << depth[i] << "\n";
-    cout << "size" << "\n";
-    rep(i,n) cout << i << ":" << size[i] << "\n";        
-  }
   
 };
-
-int main()
-{
-  int n;cin >> n;
-  vector<ll> p(n), q(n), r(n), b(n);
-  rep(i,n) {
-    cin >> p[i] >> q[i] >> r[i] >> b[i];
-    r[i]--; b[i]--;
-    ll g = gcd(p[i], q[i]);
-    p[i] /= g; q[i] /= g;
-  }
-  
-  vector<int> A, B;
-  vector<ll> C;
-  int num = n;
-  rep(i,n) {
-    if(r[i] == -1) {
-      A.push_back(i);
-      B.push_back(num++);
-    }
-    else {
-      A.push_back(i);
-      B.push_back(r[i]);
-    }
-    C.push_back(p[i]);
-    if(b[i] == -1) {
-      A.push_back(i);
-      B.push_back(num++);      
-    }
-    else {
-      A.push_back(i);
-      B.push_back(b[i]);
-    }
-    C.push_back(q[i]);    
-  }
-  
-  Tree<ll> tr(A.size()+1, A, B, C);
-  tr.solve();
-  //  tr.show();
-  return 0;
-}

@@ -34,7 +34,7 @@ public:
   void add_edge(int from,int to){ edge[from].push_back(to);}
 
   // トポロジカルソート
-  vector<int> t_sort() { 
+  int t_sort() { 
     in.resize(n,0);
     depth.resize(n);    
     rep(v,n) for(int w : edge[v]) in[w]++; // 全ての頂点の入次数をカウント
@@ -45,29 +45,23 @@ public:
       depth[i] = 0;
     }
 
-    vector<int> res;
+    int cnt = 0;
+    int res = 0;
     while(!q.empty()) { 
       int v = q.front(); q.pop();
-      res.push_back(v);
+      cnt++;
       for(int w : edge[v]) {
 	in[w]--; // 入次数が0の頂点から伸びた先の頂点の入次数を1減らす
 	if(in[w] == 0) {
 	  q.push(w);
 	  depth[w] = depth[v] + 1;
+	  chmax(res, depth[w]);
 	}
       }
     }
     
-    return res;
-  }
-
-  bool dag_check() { //DAGかをチェック
-    t_sort();
-    bool f = true;
-    rep(i,n) {
-      if(in[i] != 0) f = false;
-    }
-    return f;
+    if(cnt == n) return res;
+    else return -1;
   }
 
   int GetDepth(int v) { return depth[v]; }
@@ -88,8 +82,7 @@ int main()
   map<pair<int,int>,int> mp;
   rep(i,n) {
     rep(j,n) {
-      if(i == j) continue;
-      if(i > j) mp[{i, j}] = mp[{j, i}];
+      if(i >= j) continue;
       else mp[{i, j}] = cnt++;
     }
   }
@@ -97,17 +90,16 @@ int main()
   vector<int> b, c;
   rep(i,n) {
     rep(j,n-2) {
-      b.push_back(mp[{i, a[i][j]}]);
-      c.push_back(mp[{i, a[i][j+1]}]);      
+      if(i < a[i][j]) b.push_back(mp[{i, a[i][j]}]);
+      else b.push_back(mp[{a[i][j], i}]);
+      if(i < a[i][j+1]) c.push_back(mp[{i, a[i][j+1]}]);
+      else c.push_back(mp[{a[i][j+1], i}]);      
     }
   }
 
   Graph gp(cnt, b.size(), b, c);
-  if(gp.dag_check()) {
-    int res = 0;
-    rep(i,cnt) {
-      chmax(res, gp.GetDepth(i));
-    }
+  int res = gp.t_sort();
+  if(res >= 0) {
     cout << res+1 << "\n";
   }
   else {
