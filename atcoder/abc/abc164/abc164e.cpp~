@@ -1,0 +1,34 @@
+#include <iostream>
+#include <algorithm>
+#include <vector>
+#define rep(i,n) for(int i=0;i<n;++i)
+#define rep1(i,n) for(int i=1;i<=n;++i)
+using namespace std;
+template<class T>bool chmax(T &a, const T &b) { if(a < b){ a = b; return 1; } return 0; }
+template<class T>bool chmin(T &a, const T &b) { if(a > b){ a = b; return 1; } return 0; }
+typedef long long ll;
+ll dfs(int v, ll g) {
+  if(dp[v][g] >= 0) return d[v][g];
+  ll res = 1LL << 60;
+  for(auto w: edge[v]) {
+    chmin(res, dp[w.first][g-w.second.fisrt] + w.second.second);
+    
+  }
+}
+
+int main()
+{
+  int n,m,s;cin >> n >> m >> s;
+  vector<int> u(m), v(m), a(m), c(n);
+  vector<ll> b(m), d(n);
+  rep(i,m) {
+    cin >> u[i] >> v[i] >> a[i] >> b[i];
+    u[i]--; v[i]--;
+  }
+  rep(i,n) {
+    cin >> c[i] >> d[i];
+  }
+
+  
+  return 0;
+}

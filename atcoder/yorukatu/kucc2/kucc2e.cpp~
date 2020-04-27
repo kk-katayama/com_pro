@@ -1,0 +1,52 @@
+#include <iostream>
+#include <algorithm>
+#include <vector>
+#include <set>
+#include <utility>
+#define rep(i,n) for(int i=0;i<n;++i)
+#define rep1(i,n) for(int i=1;i<=n;++i)
+using namespace std;
+template<class T>bool chmax(T &a, const T &b) { if(a < b){ a = b; return 1; } return 0; }
+template<class T>bool chmin(T &a, const T &b) { if(a > b){ a = b; return 1; } return 0; }
+typedef long long ll;
+ll inf = 1ll << 60;
+int main()
+{
+  int n;cin >> n;
+  vector<ll> s(n), c(n);
+  rep(i,n) cin >> s[i] >> c[i];
+
+  set<pair<ll,ll>> st;
+  rep(i,n) {
+    // w->w
+    ll start;
+    auto it = st.upper_bound(s[i]);
+    it--;
+    if(*it.second < s[i]) {
+      start = s[i];
+    }
+    else if(*it.second == s[i]) {
+      start = *it.first;
+    }
+    else {
+    }
+    while(1) {
+      it++;
+      if(s[i] + c[i] < *it.first) {
+	st.insert({start, s[i] + c[i]) );
+	cout << s[i] + c[i] - 1 << "\n";
+	break;
+      }
+      else if(s[i] + c[i] == *it.first) {
+	st.insert({start, *it.second) );
+	st.erase(it);
+	cout << s[i] + c[i] - 1 << "\n";
+	break;
+      }
+      else {
+	
+      }
+    }
+  }
+  return 0;
+}

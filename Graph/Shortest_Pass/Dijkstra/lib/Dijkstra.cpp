@@ -12,7 +12,7 @@ struct Graph{
   int m;
   vector<vector<pair<int,X>>> edge;
   vector<X> d;
-  const X inf = 1e+9;
+  const X inf = 2e+9;
   
   Graph(int _n){
     n = _n;
@@ -24,7 +24,7 @@ struct Graph{
     n = _n;m = _m;edge.resize(n);d.resize(n);
     rep(i,m){
       edge[a[i]].push_back({b[i],c[i]});
-      edge[b[i]].push_back({a[i],c[i]});　//無向グラフ
+      //      edge[b[i]].push_back({a[i],c[i]});　//無向グラフ
     }
   }
   
@@ -35,7 +35,7 @@ struct Graph{
   // ダイクストラ法 頂点sから全頂点への最短距離。qは{その頂点までの最短距離,頂点}を入れる。
   void dijkstra(int s){
     priority_queue<pair<X,int>,vector<pair<X,int> >,greater<pair<X,int> > > q;
-    rep(i,node) d[i] = inf;
+    rep(i,n) d[i] = inf;
     d[s] = 0;
     q.push(make_pair(0,s));
     while(!q.empty()){
@@ -50,12 +50,25 @@ struct Graph{
 	  d[t] = d[w] + c;
 	  q.push(make_pair(d[t],t));
 	}
-          }
+      }
+    }
   }
-  
 };
 int main()
 {
+  int n,m,s;cin >> n >> m >> s;
+  vector<int> a(m), b(m) ,c(m);
+  rep(i,m) {
+    cin >> a[i] >> b[i] >> c[i];
+  }
+
+  Graph<int> gp(n, m, a, b, c);
+  gp.dijkstra(s);
+  rep(i,n) {
+    int res = gp.d[i];
+    if(res == gp.inf) cout << "INF" << "\n";
+    else cout << res << "\n";
+  }
   
   return 0;
 }

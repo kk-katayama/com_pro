@@ -1,3 +1,14 @@
+#include <iostream>
+#include <algorithm>
+#include <vector>
+#include <utility>
+#include <queue>
+#define rep(i,n) for(int i=0;i<n;++i)
+#define rep1(i,n) for(int i=1;i<=n;++i)
+using namespace std;
+template<class T>bool chmax(T &a, const T &b) { if(a < b){ a = b; return 1; } return 0; }
+template<class T>bool chmin(T &a, const T &b) { if(a > b){ a = b; return 1; } return 0; }
+typedef long long ll;
 //***********************************************************
 // Dijkstra
 //***********************************************************
@@ -67,7 +78,7 @@ public:
     edge.resize(n);
     rep(i,m) {
       add_edge(from[i], to[i], cost[i]);
-      add_edge(to[i], from[i], cost[i]);      
+      //      add_edge(to[i], from[i], cost[i]);  // indirected edge
     }
   }
 
@@ -110,3 +121,24 @@ public:
   }
   
 };
+
+
+int main()
+{
+  int n,m,s;cin >> n >> m >> s;
+  vector<int> a(m), b(m), c(m);
+  rep(i,m) {
+    cin >> a[i] >> b[i] >> c[i];
+  }
+
+  Graph<int> gp(n, m, a, b, c);
+  gp.dijkstra(s);
+  
+  rep(i,n) {
+    int res = gp.Get_d(s, i);
+    if(res == -1) cout << "INF" << "\n";
+    else cout << res << "\n";
+  }
+  
+  return 0;
+}

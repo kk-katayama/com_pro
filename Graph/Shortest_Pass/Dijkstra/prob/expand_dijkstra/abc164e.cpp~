@@ -1,13 +1,32 @@
+#include <iostream>
+#include <algorithm>
+#include <vector>
+#include <utility>
+#include <queue>
+#define rep(i,n) for(int i=0;i<n;++i)
+#define rep1(i,n) for(int i=1;i<=n;++i)
+using namespace std;
+template<class T>bool chmax(T &a, const T &b) { if(a < b){ a = b; return 1; } return 0; }
+template<class T>bool chmin(T &a, const T &b) { if(a > b){ a = b; return 1; } return 0; }
+typedef long long ll;
 //***********************************************************
 // Dijkstra
 //***********************************************************
 template <typename X = int>
 struct Node{ // Status of node
   int idx; // index of node
-
+  int rate;
+  X time;
+  
   Node() = default;
 
   explicit Node(int idx) : idx(idx) {}
+
+  void Set(int _idx, int _rate, X _time) {
+    idx = _idx;
+    rate = _rate;
+    time = _time;
+  }
 };
 
 template <typename X = int>
@@ -15,17 +34,22 @@ struct Edge{ // status of edge
   int from; 
   int to;
   X cost;
-
+  int charge;
+  
   Edge() = default;
 
   Edge(int from, int to, X cost) : from(from), to(to), cost(cost) {}
+
+  void Set(int _charge) {
+    charge = _charge;
+  }
 };
 
 template <typename X = int>
 struct Status{ // entered priority_queue
   int idx;
   X dist;
-
+  
   Status() = default;
 
   Status(int idx, X dist) : idx(idx), dist(dist) {}
@@ -45,7 +69,7 @@ struct Status{ // entered priority_queue
   bool operator > (const Status& r) const {
     return dist < r.dist;
   }
-  
+
 };
 
 template <typename X = int>
@@ -75,6 +99,14 @@ public:
     edge[from].emplace_back(from, to, cost);
   }
 
+  void Init(vector<int> rate, vector<X> time, vector<int> charge, vector<int> coin) {
+    node.resize(n);
+    rep(i,n) {
+      node[i].Set(i, rate[i], time[i]);
+    }
+  }
+
+  
   //*************************************
   // dijkstra
   // s is start node
@@ -110,3 +142,30 @@ public:
   }
   
 };
+
+
+int main()
+{
+  int n,m,s; cin >> n >> m >> s;
+  vector<int> u(m), v(m), a(m), c(n);
+  vector<ll> b(m), d(n);
+  rep(i,m) {
+    cin >> u[i] >> v[i] >> a[i] >> b[i];
+    u[i]--; v[i]--;
+  }
+  rep(i,n) cin >> c[i] >> d[i];
+  
+  Graph<ll> gp(n, m, u, v, b, a);
+  gp.Init_Vertex(c, d);
+  gp.dijkstra(0, s);
+
+  rep1(i,n-1) {
+    ll res = 1e+17;
+    rep(j,2501) {
+      chmin(res, gp.get_d(0, i, j));
+    }
+    cout << res << "\n";
+  }
+  
+  return 0;
+}
