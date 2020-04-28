@@ -1,14 +1,13 @@
 #include <iostream>
 #include <algorithm>
 #include <vector>
-#include <queue>
 #define rep(i,n) for(int i=0;i<n;++i)
 #define rep1(i,n) for(int i=1;i<=n;++i)
 using namespace std;
 template<class T>bool chmax(T &a, const T &b) { if(a < b){ a = b; return 1; } return 0; }
 template<class T>bool chmin(T &a, const T &b) { if(a > b){ a = b; return 1; } return 0; }
 //***********************************************************
-// Dijkstra
+// Bellmanford
 //***********************************************************
 template <typename X>
 struct Node{ // Status of node
@@ -74,58 +73,55 @@ public:
     edge[from].emplace_back(from, to, cost);
   }
 
-  //*************************************
-  // dijkstra
-  // s is start node
-  //*************************************
-  void dijkstra(int s) { 
-    // initalize d
+  //***********************************
+  // Bellmanford
+  //***********************************
+  bool Bellmanford(int s) {
     d.resize(n);
     d[s].resize(n, inf);
     d[s][s] = 0;
     
-    priority_queue<Node<X>> pq;
-    pq.emplace(s, 0); // pq have (node, shortest distance from start to the node)
-
-    while( !pq.empty() ) {
-      Node<X> now = pq.top(); pq.pop();
-      int v = now.idx; // number of node
-      X dis = now.dist; // distance of start from node "v"
-      if(d[s][v] < dis) continue; 
-      for(auto next: edge[v]) {
-	int w = next.to;
-	X cos = next.cost;
-	if(chmin(d[s][w], d[s][v] + cos)) {
-	  pq.emplace(w, d[s][w]);
+    bool flag = true;
+    rep(i,n) {
+      rep(v,n) {
+	if(d[s][v] == inf) continue;
+	for(auto next: edge[v]) {
+	  int w = next.to;
+	  X cost = next.cost;
+	  if(d[s][w] > d[s][v] + cost) {
+	    d[s][w] = d[s][v] + cost;
+	    if(i == n - 1) flag = false;
+	  }
 	}
       }
     }
+    return flag;
   }
-
-
+  
   X Get_d(int start, int goal) {
-    if(d[start][goal] == inf) return -1;
+    //    if(d[start][goal] == inf) return -1;
     return d[start][goal];
   }
+
+  X Get_inf() { return inf; }
   
 };
 
 int main()
 {
-  int n,m,s;cin >> n >> m >> s;
+  int n,m;cin >> n >> m;
+  int r; cin >> r;
   vector<int> a(m), b(m), c(m);
-  rep(i,m) {
-    cin >> a[i] >> b[i] >> c[i];
-  }
+  rep(i,m) cin >> a[i] >> b[i] >> c[i];
 
   Graph<int> gp(n, m, a, b, c);
-  gp.dijkstra(s);
-
-  rep(i,n) {
-    int res = gp.Get_d(s, i);
-    if(res == -1) cout << "INF" << "\n";
-    else cout << res << "\n";
+  if(gp.Bellmanford(r)) {
+    rep(i,n) {
+      if(gp.Get_d(r, i) == gp.Get_inf()) cout << "INF" << "\n";
+      else cout << gp.Get_d(r, i) << "\n";
+    }
   }
+  else cout << "NEGATIVE CYCLE" << "\n";
   
   return 0;
 }

@@ -15,12 +15,37 @@ typedef long long ll;
 template <typename X = int>
 struct Node{ // Status of node
   int idx; // index of node
+  X dist; // distance from start node
+  int coin;
   int rate;
   X time;
   
   Node() = default;
 
-  Node(int idx, int rate, X time) : idx(idx), rate(rate), time(time) {}
+  explicit Node(int idx) : idx(idx) {}
+  
+  Node(int idx, X dist, int coin) : idx(idx), dist(dist), coin(coin) {}
+
+  void Set(int ratee, X timee) {
+    rate = ratee;
+    time = timee;
+  }
+
+  bool operator == (const Node& r) const {
+    return (idx == r.idx && dist == r.dist);
+  }
+
+  bool operator != (const Node& r) const {
+    return !(*this == r);
+  }
+
+  bool operator < (const Node& r) const { 
+    return dist > r.dist;
+  }
+
+  bool operator > (const Node& r) const {
+    return dist < r.dist;
+  }
 };
 
 template <typename X = int>
@@ -33,34 +58,6 @@ struct Edge{ // status of edge
   Edge() = default;
 
   Edge(int from, int to, X cost, int charge) : from(from), to(to), cost(cost), charge(charge) {}
-};
-
-template <typename X = int>
-struct Status{ // entered priority_queue
-  int idx;
-  X dist;
-  int coin;
-  
-  Status() = default;
-
-  Status(int idx, X dist, int coin) : idx(idx), dist(dist), coin(coin) {}
-
-  bool operator == (const Status& r) const {
-    return (idx == r.idx && dist == r.dist);
-  }
-
-  bool operator != (const Status& r) const {
-    return !(*this == r);
-  }
-
-  bool operator < (const Status& r) const { 
-    return dist > r.dist;
-  }
-
-  bool operator > (const Status& r) const {
-    return dist < r.dist;
-  }
-
 };
 
 template <typename X = int>
@@ -93,9 +90,8 @@ public:
   }
 
   void Init_node(vector<int> rate, vector<X> time) {
-    rep(i,n) {
-      node.emplace_back(i, rate[i], time[i]);
-    }
+    rep(i,n) node.emplace_back(i);
+    rep(i,n) node[i].Set(rate[i], time[i]);
   }
 
   
@@ -110,15 +106,15 @@ public:
     chmin(g, M);
     d[s][s][g] = 0;
     
-    priority_queue<Status<X>> pq;
+    priority_queue<Node<X>> pq;
     pq.emplace(s, 0, g); // (node, distance, coin)
 
     while( !pq.empty() ) {
-      Status<X> now = pq.top(); pq.pop();
+      Node<X> now = pq.top(); pq.pop();
       int v = now.idx; // number of node
       X dis = now.dist; // distance of start from node "v"
       int coin = now.coin;
-
+      
       // exchange coin
       int rate = node[v].rate;
       X time = node[v].time;

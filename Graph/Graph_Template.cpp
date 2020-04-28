@@ -1,12 +1,18 @@
+//****************************************
+// Graph template
+//****************************************
+
+// status of node
 template <typename X>
-struct Node{
+struct Node{ 
   int idx;
 
   Node() = default;
 
-  explicit Node(int idx) : idx(idx) {}
+  Node(int idx) : idx(idx) {}
 };
 
+// status of edge
 template <typename X>
 struct Edge{
   int from;
@@ -15,46 +21,19 @@ struct Edge{
 
   Edge() = default;
 
-  Edge(int from, int to, X cost) : from(from), to(to), cost(cost) {}
-};
-
-template <typename X>
-struct Status{
-  int idx;
-  X dist;
-
-  Status() = default;
-
-  Status(int idx, X dist) : idx(idx), dist(dist) {}
-
-  bool operator == (const Status& r) const {
-    return (idx == r.idx && dist == r.dist);
-  }
-
-  bool operator != (const Status& r) const {
-    return !(*this == r);
-  }
-
-  bool operator < (const Status& r) const {
-    return dist > r.dist;
-  }
-
-  bool operator > (const Status& r) const {
-    return dist < r.dist;
-  }
-  
+  Edge(int from, int to, X cost = 1) : from(from), to(to), cost(cost) {}
 };
 
 template <typename X>
 class Graph{
 private:
-  int n;
-  int m;
-  vector<vector<Edge<X>>> edge;
-  vector<Node<X>> node;
+  int n; // number of node
+  int m; // number of edge
+  vector<vector<Edge<X>>> edge; // edge
+  vector<Node<X>> node; 
 
 public:
-  Graph(int n) : n(n) {
+  explicit Graph(int n) : n(n) {
     edge.resize(n);
   }
 

@@ -1,16 +1,42 @@
+#include <iostream>
+#include <algorithm>
+#include <vector>
+#include <queue>
+#define rep(i,n) for(int i=0;i<n;++i)
+#define rep1(i,n) for(int i=1;i<=n;++i)
+using namespace std;
+template<class T>bool chmax(T &a, const T &b) { if(a < b){ a = b; return 1; } return 0; }
+template<class T>bool chmin(T &a, const T &b) { if(a > b){ a = b; return 1; } return 0; }
 //***********************************************************
 // Dijkstra
 //***********************************************************
-template <typename X = int>
+template <typename X>
 struct Node{ // Status of node
   int idx; // index of node
-
+  X dist; // distance from start node
+  
   Node() = default;
 
-  explicit Node(int idx) : idx(idx) {}
+  Node(int idx, X dist) : idx(idx), dist(dist) {}
+
+  bool operator == (const Node& r) const {
+    return (idx == r.idx && dist == r.dist);
+  }
+
+  bool operator != (const Node& r) const {
+    return !(*this == r);
+  }
+
+  bool operator < (const Node& r) const { 
+    return dist > r.dist;
+  }
+
+  bool operator > (const Node& r) const {
+    return dist < r.dist;
+  }  
 };
 
-template <typename X = int>
+template <typename X>
 struct Edge{ // status of edge
   int from; 
   int to;
@@ -21,34 +47,7 @@ struct Edge{ // status of edge
   Edge(int from, int to, X cost) : from(from), to(to), cost(cost) {}
 };
 
-template <typename X = int>
-struct Status{ // entered priority_queue
-  int idx;
-  X dist;
-
-  Status() = default;
-
-  Status(int idx, X dist) : idx(idx), dist(dist) {}
-
-  bool operator == (const Status& r) const {
-    return (idx == r.idx && dist == r.dist);
-  }
-
-  bool operator != (const Status& r) const {
-    return !(*this == r);
-  }
-
-  bool operator < (const Status& r) const { 
-    return dist > r.dist;
-  }
-
-  bool operator > (const Status& r) const {
-    return dist < r.dist;
-  }
-  
-};
-
-template <typename X = int>
+template <typename X>
 class Graph{
 private:
   int n; // number of node
@@ -67,7 +66,7 @@ public:
     edge.resize(n);
     rep(i,m) {
       add_edge(from[i], to[i], cost[i]);
-      add_edge(to[i], from[i], cost[i]);      
+      //      add_edge(to[i], from[i], cost[i]);      
     }
   }
 
@@ -85,11 +84,11 @@ public:
     d[s].resize(n, inf);
     d[s][s] = 0;
     
-    priority_queue<Status<X>> pq;
+    priority_queue<Node<X>> pq;
     pq.emplace(s, 0); // pq have (node, shortest distance from start to the node)
 
     while( !pq.empty() ) {
-      Status<X> now = pq.top(); pq.pop();
+      Node<X> now = pq.top(); pq.pop();
       int v = now.idx; // number of node
       X dis = now.dist; // distance of start from node "v"
       if(d[s][v] < dis) continue; 
@@ -110,3 +109,23 @@ public:
   }
   
 };
+
+int main()
+{
+  int n,m,s;cin >> n >> m >> s;
+  vector<int> a(m), b(m), c(m);
+  rep(i,m) {
+    cin >> a[i] >> b[i] >> c[i];
+  }
+
+  Graph<int> gp(n, m, a, b, c);
+  gp.dijkstra(s);
+
+  rep(i,n) {
+    int res = gp.Get_d(s, i);
+    if(res == -1) cout << "INF" << "\n";
+    else cout << res << "\n";
+  }
+  
+  return 0;
+}

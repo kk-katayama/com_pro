@@ -1,15 +1,16 @@
-//******************************
-// Graph BFS
-//******************************
+//****************************************
+// Graph template
+//****************************************
 
 // status of node
 template <typename X>
 struct Node{ 
   int idx;
-
+  int color;
+  
   Node() = default;
 
-  Node(int idx) : idx(idx) {}
+  Node(int idx, int color = 0) : idx(idx), color(color) {}
 };
 
 // status of edge
@@ -44,22 +45,37 @@ public:
       add_edge(to[i], from[i], cost[i]);      
     }
   }
-
+  
   void add_edge(int from, int to, X cost) {
     edge[from].emplace_back(from, to, cost);
   }
 
-  void BFS(int s) {
-    queue<Node> q;
-    q.emplace(s);
-    
-    while( !q.empty() ) {
-      Node now = q.front(); q.pop();
-      int v = now.idx; // number of node
-      for(auto next: edge[v]) {
-	int w = next.to;
-	q.emplace(w);
-      }
+  void Init_node() {
+    // paint all nodes 0
+    rep(i,n) {
+      node.emplace_back(i, 0);
     }
   }
+  
+  bool paint_dfs(int v, int c) {
+    node[v].color = c; // paint node[v] c
+    for(auto next: edge[v]) {
+      int w = next.to;
+      if(node[w].color == c) return false;
+      if(node[w].color == 0 && !dfs(w, -c)) return false;
+    }
+    return true;
+  }
+
+  bool paint() {
+    Init_node();
+    
+    rep(i,n) {
+      if(node[i].color == 0) {
+	if( !paint_dfs(i, 1) ) return false;
+      }
+    }
+    return true;
+  }
+  
 };
