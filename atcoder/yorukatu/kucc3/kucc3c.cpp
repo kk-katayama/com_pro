@@ -11,6 +11,17 @@ template<class T>bool chmin(T &a, const T &b) { if(a > b){ a = b; return 1; } re
 // Dijkstra
 //***********************************************************
 template <typename X>
+struct Node{ // Status of node
+  int idx; // index of node
+  X dist; // distance from start node
+  
+  Node() = default;
+
+  explicit Node(int idx) : idx(idx) {}
+  
+};
+
+template <typename X>
 struct Edge{ // status of edge
   int from; 
   int to;
@@ -21,61 +32,62 @@ struct Edge{ // status of edge
   Edge(int from, int to, X cost) : from(from), to(to), cost(cost) {}
 };
 
-template <typename X>
-struct Node{ // Status of node
-  int idx; // index of node
-  X dist; // distance from start node
-  vector<Edge<X>> edge;
-  
-  Node() = default;
 
-  explicit Node(int idx) : idx(idx) {}
-  
-  Node(int idx, X dist) : idx(idx), dist(dist) {}
+template <typename X = int>
+struct Status{ // entered priority_queue
+  int idx;
+  X dist;
 
-  bool operator == (const Node& r) const {
+  Status() = default;
+
+  Status(int idx, X dist) : idx(idx), dist(dist) {}
+
+  bool operator == (const Status& r) const {
     return (idx == r.idx && dist == r.dist);
   }
 
-  bool operator != (const Node& r) const {
+  bool operator != (const Status& r) const {
     return !(*this == r);
   }
 
-  bool operator < (const Node& r) const { 
+  bool operator < (const Status& r) const {
     return dist > r.dist;
   }
 
-  bool operator > (const Node& r) const {
+  bool operator > (const Status& r) const {
     return dist < r.dist;
-  }  
-};
+  }
 
+};
 
 template <typename X>
 class Graph{
 private:
   int n; // number of node
   int m; // number of edge
-  //  vector<vector<Edge<X>>> edge; // edge list
+  vector<vector<Edge<X>>> edge; // edge list
   vector<Node<X>> node; // node list
 
-  //  vector<vector<X>> d; // d[i][j] := shortest distance from node "i" to node "j"
-  const X inf = 1e+9; // initial value of d
+  const X inf = 1e+9; // initial value of dist
 public:
   explicit Graph(int n) : n(n) {
-    rep(i,n) node.emplace_back(i);
+    edge.resize(n);
   }
 
   Graph(int n, int m, vector<int> from, vector<int> to, vector<X> cost) : n(n), m(m) {
-    rep(i,n) node.emplace_back(i);
+    edge.resize(n);
     rep(i,m) {
       add_edge(from[i], to[i], cost[i]);
-      //      add_edge(to[i], from[i], cost[i]);      
+      add_edge(to[i], from[i], cost[i]);      
     }
   }
 
-  void add_edge(int from, int to, X cost = 1) {
-    node[from].edge.emplace_back(from, to, cost);
+  void add_edge(int from, int to, X cost) {
+    edge[from].emplace_back(from, to, cost);
+  }
+
+  void Init_Node() {
+    rep(i,n) node.emplace_back(i);
   }
 
   //*************************************
@@ -83,18 +95,19 @@ public:
   // s is start node
   //*************************************
   void dijkstra(int s) { 
+    // initalize d
     rep(i,n) node[i].dist = inf;
     node[s].dist = 0;
     
-    priority_queue<Node<X>> pq;
+    priority_queue<Status<X>> pq;
     pq.emplace(s, 0); // pq have (node, shortest distance from start to the node)
 
     while( !pq.empty() ) {
-      Node<X> now = pq.top(); pq.pop();
+      Status<X> now = pq.top(); pq.pop();
       int v = now.idx; // number of node
       X dis = now.dist; // distance of start from node "v"
       if(node[v].dist < dis) continue; 
-      for(auto next: node[v].edge) {
+      for(auto next: edge[v]) {
 	int w = next.to;
 	X cos = next.cost;
 	if(chmin(node[w].dist, node[v].dist + cos)) {
@@ -104,31 +117,42 @@ public:
     }
   }
 
+  void solve(int s, int t) {
+    Init_Node();
+    dijkstra(s);
+    vector<X> dists(n);
+    rep(i,n) dists[i] = node[i].dist;
+    dijkstra(t);
+    bool f = true;
+    rep(i,n) {
+      if(dists[i] != inf && node[i].dist != inf && dists[i] == node[i].dist) {
+	f = false;
+	cout << i + 1 << "\n";
+	break;
+      }
+    }
+    if(f) cout << -1 << "\n";
+  }
+
   X Get_d(int v) {
     return node[v].dist;
   }
-
-  X Get_inf() { return inf; }
-  
   
 };
 
 int main()
 {
-  int n,m,s;cin >> n >> m >> s;
+  int n,m;cin >> n >> m;
+  int s,t;cin >> s >> t;
+  s--; t--;
   vector<int> a(m), b(m), c(m);
   rep(i,m) {
     cin >> a[i] >> b[i] >> c[i];
+    a[i]--; b[i]--;
   }
 
   Graph<int> gp(n, m, a, b, c);
-  gp.dijkstra(s);
-
-  rep(i,n) {
-    int res = gp.Get_d(i);
-    if(res == gp.Get_inf()) cout << "INF" << "\n";
-    else cout << res << "\n";
-  }
+  gp.solve(s, t);
   
   return 0;
 }

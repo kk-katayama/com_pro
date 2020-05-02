@@ -11,6 +11,17 @@ template<class T>bool chmin(T &a, const T &b) { if(a > b){ a = b; return 1; } re
 // Dijkstra
 //***********************************************************
 template <typename X = int>
+struct Edge{ // status of edge
+  int from; 
+  int to;
+  X cost;
+
+  Edge() = default;
+
+  Edge(int from, int to, X cost) : from(from), to(to), cost(cost) {}
+};
+
+template <typename X = int>
 struct Node{ // Status of node
   int idx; // index of node
   double x,y;
@@ -43,17 +54,6 @@ struct Node{ // Status of node
   bool operator > (const Node& r) const {
     return dist < r.dist;
   }  
-};
-
-template <typename X = int>
-struct Edge{ // status of edge
-  int from; 
-  int to;
-  X cost;
-
-  Edge() = default;
-
-  Edge(int from, int to, X cost) : from(from), to(to), cost(cost) {}
 };
 
 struct Vect{

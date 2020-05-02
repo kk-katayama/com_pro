@@ -55,20 +55,15 @@ struct Node{
     lsum.resize(n+1, id);
     rsum.resize(n+1, id);
     rep(i,n) {
-      lsum[i+1] = (lsum[i] * (dp[i] + 1)) % M;
+      lsum[i+1] = max(lsum[i], dp[i] + edge[i].cost);
     }
     for (int i = n; i > 0; --i) {
-      rsum[i-1] = (rsum[i] * (dp[i-1] + 1)) % M;
+      rsum[i-1] = max(rsum[i], dp[i-1] + edge[i-1].cost);
     }
   }
 
   bool is_full_dp() {
     return cnt == dp.size();
-  }
-  
-  void Show() {
-    rep(i,dp.size()) cout << dp[i] << " ";
-    cout  << "\n";
   }
   
 };
@@ -126,32 +121,32 @@ public:
     int index = node[p].to_index[v];
     if(index != -1) if(node[p].dp[index] >= 0) return node[p].dp[index];
     if(node[v].is_full_dp()) {
-      if(node[v].cnt == 0) return 1;
+      if(node[v].cnt == 0) return 0;
       int index2 = node[v].to_index[p];
       if(index2 == -1) {
 	return node[v].rsum[0];
       }
       else {
-	node[p].dp[index] = (node[v].lsum[index2] * node[v].rsum[index2+1]) % M;
+	node[p].dp[index] = max(node[v].lsum[index2], node[v].rsum[index2+1]);
 	node[p].cnt++;
 	if(node[p].is_full_dp()) {
-	  node[p].Make_Sum(1);
+	  node[p].Make_Sum(0);
 	}
 	return node[p].dp[index];
       }
     }
-    X res = 1;
+    X res = 0;
     for(auto next: node[v].edge) {
       int w = next.to;
       if(w == p) continue;
-      res = (res * (ReRoot(v, w) + 1) ) % M;
+      res = max(res, (ReRoot(v, w) + next.cost));
     }
     
     if(index == -1) return res;
     node[p].dp[index] = res;
     node[p].cnt++;
     if(node[p].is_full_dp()) {
-      node[p].Make_Sum(1);
+      node[p].Make_Sum(0);
     }
     return res;
   }
@@ -161,17 +156,13 @@ public:
 int main()
 {
   int n;cin >> n;
-  cin >> M;
   vector<int> a(n-1), b(n-1);
-  vector<int> inout(n, 0);
+  vector<ll> c(n-1);
   rep(i,n-1) {
-    cin >> a[i] >> b[i];
-    a[i]--; b[i]--;
-    inout[a[i]]++;
-    inout[b[i]]++;
+    cin >> a[i] >> b[i] >> c[i];
   }
 
-  Tree<ll> tr(n, a, b);
+  Tree<ll> tr(n, a, b, c);
   tr.Init_Node(0);
   rep(i,n) cout << tr.ReRoot(i, i) << "\n";
   

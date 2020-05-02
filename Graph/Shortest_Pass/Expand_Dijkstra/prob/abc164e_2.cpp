@@ -27,8 +27,7 @@ struct Edge{ // status of edge
 template <typename X = int>
 struct Node{ // Status of node
   int idx; // index of node
-  X dist; // distance from start node
-  int coin;
+  X dist[2501]; // distance from start node
   int rate;
   X time;
   
@@ -36,30 +35,36 @@ struct Node{ // Status of node
 
   explicit Node(int idx) : idx(idx) {}
   
-  Node(int idx, X dist, int coin) : idx(idx), dist(dist), coin(coin) {}
+  Node(int idx, int rate, X time) : idx(idx), rate(rate), time(time) {}
 
-  void Set(int ratee, X timee) {
-    rate = ratee;
-    time = timee;
-  }
+};
 
-  bool operator == (const Node& r) const {
+template <typename X>
+struct Status{
+  int idx;
+  X dist;
+  int coin;
+
+  Status() = default;
+
+  Status(int idx, X dist, int coin) : idx(idx), dist(dist), coin(coin) {}
+  
+  bool operator == (const Status& r) const {
     return (idx == r.idx && dist == r.dist);
   }
 
-  bool operator != (const Node& r) const {
+  bool operator != (const Status& r) const {
     return !(*this == r);
   }
 
-  bool operator < (const Node& r) const { 
+  bool operator < (const Status& r) const { 
     return dist > r.dist;
   }
 
-  bool operator > (const Node& r) const {
+  bool operator > (const Status& r) const {
     return dist < r.dist;
   }
 };
-
 
 template <typename X = int>
 class Graph{
@@ -91,8 +96,7 @@ public:
   }
 
   void Init_node(vector<int> rate, vector<X> time) {
-    rep(i,n) node.emplace_back(i);
-    rep(i,n) node[i].Set(rate[i], time[i]);
+    rep(i,n) node.emplace_back(i, rate[i], time[i]);
   }
   
   
@@ -102,16 +106,20 @@ public:
   //*************************************
   void dijkstra(int s, int g) { 
     // initalize d
-    d.resize(n);
-    d[s].resize(n, vector<X>(M+1, inf));
-    chmin(g, M);
-    d[s][s][g] = 0;
+    // d.resize(n);
+    // d[s].resize(n, vector<X>(M+1, inf));
+    // chmin(g, M);
+    // d[s][s][g] = 0;
     
-    priority_queue<Node<X>> pq;
+    rep(i,n) rep(j,M+1) node[i].dist[j] = inf;
+    chmin(g, M);
+    node[s].dist[g] = 0;
+    
+    priority_queue<Status<X>> pq;
     pq.emplace(s, 0, g); // (node, distance, coin)
 
     while( !pq.empty() ) {
-      Node<X> now = pq.top(); pq.pop();
+      Status<X> now = pq.top(); pq.pop();
       int v = now.idx; // number of node
       X dis = now.dist; // distance of start from node "v"
       int coin = now.coin;
@@ -119,27 +127,27 @@ public:
       // exchange coin
       int rate = node[v].rate;
       X time = node[v].time;
-      if(chmin(d[s][v][min(M, coin + rate)], d[s][v][coin] + time)) {
-	pq.emplace(v, d[s][v][min(M, coin + rate)], min(M, coin + rate));
+      if(chmin(node[v].dist[min(M, coin + rate)], node[v].dist[coin] + time)) {
+	pq.emplace(v, node[v].dist[min(M, coin + rate)], min(M, coin + rate));
       }
       
-      if(d[s][v][coin] < dis) continue; 
+      if(node[v].dist[coin] < dis) continue; 
       for(auto next: edge[v]) {
 	int w = next.to;
 	X cos = next.cost;
 	int charge = next.charge;
 	if(coin < charge) continue;
-	if(chmin(d[s][w][coin - charge], d[s][v][coin] + cos)) {
-	  pq.emplace(w, d[s][w][coin - charge], coin - charge);
+	if(chmin(node[w].dist[coin - charge], node[v].dist[coin] + cos)) {
+	  pq.emplace(w, node[w].dist[coin - charge], coin - charge);
 	}
       }
     }
   }
 
 
-  X Get_d(int start, int goal, int coin) {
+  X Get_d(int v, int coin) {
     //    if(d[start][goal] == inf) return -1
-    return d[start][goal][coin];
+    return node[v].dist[coin];
   }
   
 };
@@ -163,7 +171,7 @@ int main()
   rep1(i,n-1) {
     ll res = 1e+17;
     rep(j,2501) {
-      chmin(res, gp.Get_d(0, i, j));
+      chmin(res, gp.Get_d(i, j));
     }
     cout << res << "\n";
   }

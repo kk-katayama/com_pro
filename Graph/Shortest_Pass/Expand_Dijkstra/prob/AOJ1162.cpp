@@ -14,7 +14,7 @@ template<class T>bool chmin(T &a, const T &b) { if(a > b){ a = b; return 1; } re
 template <typename X = int>
 struct Node{ // Status of node
   int idx; // index of node
-
+  vector<vector<X>> dist;
   Node() = default;
 
   explicit Node(int idx) : idx(idx) {}
@@ -90,15 +90,23 @@ public:
     edge[from].emplace_back(from, to, cost, limit, index);
   }
 
+  void Init_Node() {
+    rep(i,n) node.emplace_back(i);
+  }
+  
   //*************************************
   // dijkstra
   // s is start node
   //*************************************
   void dijkstra(int s) { 
     // initalize d
-    d.resize(n);
-    d[s].resize(n, vector<vector<X>>(M+2, vector<X>(m+1, inf)));
-    d[s][s][0][m] = 0;
+    // d.resize(n);
+    // d[s].resize(n, vector<vector<X>>(M+2, vector<X>(m+1, inf)));
+    // d[s][s][0][m] = 0;
+
+    Init_Node();
+    rep(i,n) node[i].dist.assign(M+2, vector<X>(m+1, inf));
+    node[s].dist[0][m] = 0;
     
     priority_queue<Status<X>> pq;
     pq.emplace(s, 0, 0, m); // (node, distance, speed, before)
@@ -109,7 +117,7 @@ public:
       X dis = now.dist; // distance of start from node "v"
       int speed = now.vel; // velocity
       int before = now.before;
-      if(d[s][v][speed][before] < dis) continue;
+      if(node[v].dist[speed][before] < dis) continue;
       for(auto next: edge[v]) {
 	int w = next.to;
 	X cos = next.cost;
@@ -119,8 +127,8 @@ public:
 	for(int i = -1; i <= 1; ++i) {
 	  int nspeed = speed + i;
 	  if(nspeed <= 0 || limit < nspeed) continue;
-	  if(chmin(d[s][w][nspeed][idx], d[s][v][speed][before] + cos / nspeed)) {
-	    pq.emplace(w, d[s][w][nspeed][idx], nspeed, idx);
+	  if(chmin(node[w].dist[nspeed][idx], node[v].dist[speed][before] + cos / nspeed)) {
+	    pq.emplace(w, node[w].dist[nspeed][idx], nspeed, idx);
 	  }
 	}
       }
@@ -128,9 +136,9 @@ public:
   }
 
 
-  X Get_d(int start, int goal, int speed, int index) {
+  X Get_d(int v, int speed, int index) {
     //    if(d[start][goal][speed][index] == inf) return -1;
-    return d[start][goal][speed][index];
+    return node[v].dist[speed][index];
   }
 
   X Get_inf() { return inf; }
@@ -153,7 +161,7 @@ int main()
     gp.dijkstra(s);
     double res = gp.Get_inf();
     rep(i,m) {
-      chmin(res, gp.Get_d(s, g, 1, i));
+      chmin(res, gp.Get_d(g, 1, i));
     }
     ans.push_back(res);
   }
