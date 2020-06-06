@@ -4,6 +4,8 @@
 #define rep(i,n) for(int i=0;i<n;++i)
 #define rep1(i,n) for(int i=1;i<=n;++i)
 using namespace std;
+template<class T>bool chmax(T &a, const T &b) { if(a < b){ a = b; return 1; } return 0; }
+template<class T>bool chmin(T &a, const T &b) { if(a > b){ a = b; return 1; } return 0; }
 typedef long long ll;
 const ll MOD=1e+9+7;
 struct mint{
@@ -53,7 +55,8 @@ struct mint{
     return res/=a;
   }
 };
-const int NMAX=500000;
+
+const int NMAX=400010; // we can calculate nCk until n is equal to NMAX
 mint fact[NMAX],infac[NMAX];
 void Make_Fact(){
   fact[0]=fact[1]=1;
@@ -64,7 +67,7 @@ void Make_Fact(){
 void Make_InvFact(){
   infac[0]=infac[1]=1;
   for(int i=2;i<=NMAX-1;++i){
-    infac[i]=infac[i-1]/(mint)i;	
+    infac[i]=infac[i-1]/(mint)i;
   }
 }
 mint Comb(int n,int k){
@@ -74,19 +77,18 @@ mint Comb(int n,int k){
 
 int main()
 {
+  int n,k; cin >> n >> k;
   Make_Fact();
   Make_InvFact();
-  ll n,k;
-  cin >> n >> k;
-  if(k>=n-1){
-    cout << Comb(2*n-1,n).x << "\n";
+
+  if(n-1 <= k) {
+    cout << Comb(2*n-1, n).x << "\n";
   }
-  else{
-    mint res;
-    rep1(i,k){
-      res += Comb(n-1,n-i-1)*Comb(n,i);
+  else {
+    mint res = Comb(2*n-1, n);
+    for(int i = k + 1; i <= n-1; ++i) {
+      res -= Comb(n, i) * Comb(n-1, i);
     }
-    if(k!=1) res += (mint)1;
     cout << res.x << "\n";
   }
   return 0;

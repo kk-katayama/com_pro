@@ -1,19 +1,10 @@
 //***********************************************************
-// Dijkstra
+// Dijkstra. You should include queue lib.
 //***********************************************************
-template <typename X>
-struct Node{ // Status of node
-  int idx; // index of node
-  X dist; // distance from start node
-  
-  Node() = default;
 
-  explicit Node(int idx) : idx(idx) {}
-  
-};
-
+// status of edge
 template <typename X>
-struct Edge{ // status of edge
+struct Edge{ 
   int from; 
   int to;
   X cost;
@@ -23,6 +14,18 @@ struct Edge{ // status of edge
   Edge(int from, int to, X cost) : from(from), to(to), cost(cost) {}
 };
 
+// status of node
+template <typename X>
+struct Node{ 
+  int idx; // index of node
+  X dist; // distance from start node
+  vector<Edge<X>> edge;
+  
+  Node() = default;
+
+  explicit Node(int idx) : idx(idx) {}
+  
+};
 
 template <typename X = int>
 struct Status{ // entered priority_queue
@@ -56,30 +59,40 @@ class Graph{
 private:
   int n; // number of node
   int m; // number of edge
-  vector<vector<Edge<X>>> edge; // edge list
   vector<Node<X>> node; // node list
 
   const X inf = 1e+9; // initial value of dist
+
+  void Init_Node() {
+    rep(i,n) node.emplace_back(i);
+  }  
 public:
   explicit Graph(int n) : n(n) {
-    edge.resize(n);
+    Init_Node();
   }
 
+  // no-weight
+  Graph(int n, int m, vector<int> from, vector<int> to) : n(n), m(m) {
+    Init_Node();
+    rep(i,m) {
+      add_edge(from[i], to[i]);
+      add_edge(to[i], from[i]);      
+    }
+  }
+  
   Graph(int n, int m, vector<int> from, vector<int> to, vector<X> cost) : n(n), m(m) {
-    edge.resize(n);
+    Init_Node();
     rep(i,m) {
       add_edge(from[i], to[i], cost[i]);
       add_edge(to[i], from[i], cost[i]);      
     }
   }
 
-  void add_edge(int from, int to, X cost) {
-    edge[from].emplace_back(from, to, cost);
+  void add_edge(int from, int to, X cost = 1) {
+    node[from].edge.emplace_back(from, to, cost);
   }
 
-  void Init_Node() {
-    rep(i,n) node.emplace_back(i);
-  }
+
 
   //*************************************
   // dijkstra
@@ -98,7 +111,7 @@ public:
       int v = now.idx; // number of node
       X dis = now.dist; // distance of start from node "v"
       if(node[v].dist < dis) continue; 
-      for(auto next: edge[v]) {
+      for(auto next: node[v].edge) {
 	int w = next.to;
 	X cos = next.cost;
 	if(chmin(node[w].dist, node[v].dist + cos)) {
@@ -109,8 +122,7 @@ public:
   }
 
 
-  X Get_d(int v) {
-    return node[v].dist;
-  }
+  X Get_d(int v) { return node[v].dist; }
+  X Get_inf() { return inf; }
   
 };

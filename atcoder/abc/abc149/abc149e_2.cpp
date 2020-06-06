@@ -1,88 +1,56 @@
 #include <iostream>
-#include <vector>
 #include <algorithm>
-
+#include <vector>
+#define rep(i,n) for(int i=0;i<n;++i)
+#define rep1(i,n) for(int i=1;i<=n;++i)
 using namespace std;
+template<class T>bool chmax(T &a, const T &b) { if(a < b){ a = b; return 1; } return 0; }
+template<class T>bool chmin(T &a, const T &b) { if(a > b){ a = b; return 1; } return 0; }
 typedef long long ll;
-bool comp(ll &a,ll &b){
-  return a>b;
-}
 int main()
 {
-  int n;
-  cin >> n;
-  ll m;
-  cin >> m;
+  ll n,m; cin >> n >> m;
   vector<ll> a(n);
-  ll mm = 0;
-  for(int i=0;i<n;++i){
-    cin >> a[i];
-    mm = max(mm,a[i]);
-  }
-  mm *= 2;
-  
-  sort(a.begin(), a.end(),comp);
+  rep(i,n) cin >> a[i];
 
-  ll lb=0,ub=mm+1;
-  while(ub-lb>1){
-    ll mid = (ub+lb)/2;
-    ll cnt=0;
-    for(int i=0;i<n;++i){
-      ll thr = mid-a[i];
-      ll lbb = -1,ubb = n;
-      while(ubb-lbb>1){
-	ll midd=(ubb+lbb)/2;
-	if(a[midd]>=thr){
-	  lbb = midd;
-	}
-	else{
-	  ubb = midd;
-	}
-      }
-      //cout << i << ":" << lbb << "\n";
-      cnt+=lbb+1;
-    }
-    //    cout << mid << ":" << cnt << "*************\n";
-    if(cnt>=m){
-      lb = mid;
-    }
-    else{
-      ub = mid;
-    }
-  }
-  
-  ll x = lb;
-  //  cout << x << "\n";
+  sort(a.begin(), a.end());
+
+  auto bins = [&](auto isok, ll x, ll maxi)-> ll{
+		ll lb = -1, ub = maxi;
+		while(ub - lb > 1) {
+		  ll mid = (ub + lb) / 2;
+		  (isok(mid, x) ? ub : lb) = mid;
+		}
+		return ub;
+	      };
+
+  auto comp1 = [&](ll mid, ll x)-> bool{
+		 return x <= a[mid];
+	       };
+
+  auto comp2 = [&](ll mid, ll x)-> bool{
+		 ll cnt = 0;
+		 rep(i,n) {
+		   cnt += bins(comp1, mid - a[i], n);
+		 }
+		 return n*n - m <= cnt;
+	       };
+
+  ll bor = bins(comp2, 0, 1e+10+1);
+
   vector<ll> sum(n+1);
   sum[0] = 0;
-  for(int i=0;i<n;++i){
-    sum[i+1] = sum[i]+a[i];
-  }
-
-  // for(int i=0;i<n+1;++i){
-  //   cout << sum[i] << "\n";
-  // }
+  rep(i,n) sum[i+1] = sum[i] + a[i];
   
+  ll cnt = 0;
   ll res = 0;
-  ll ct = 0;
-  for(int i=0;i<n;++i){
-    ll thr = x - a[i];
-    ll lbb = -1,ubb = n;
-    while(ubb-lbb>1){
-      ll midd = (ubb+lbb)/2;
-      if(a[midd]>=thr){
-	lbb = midd;
-      }
-      else{
-	ubb = midd;
-      }
-    }
-    //    cout << i << ":" << lbb << "\n";
-    ct += lbb+1;
-    res += a[i]*(lbb+1)+sum[lbb+1];
+  rep(i,n) {
+    ll tmp = bins(comp1, bor - a[i], n);
+    cnt += n - tmp;
+    res += (sum[n] - sum[tmp]) + a[i] * (n - tmp);
   }
 
-  res -= (ct-m)*x;
+  res += (m - cnt) * (bor - 1);
   cout << res << "\n";
   
   return 0;

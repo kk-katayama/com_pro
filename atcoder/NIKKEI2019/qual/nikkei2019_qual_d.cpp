@@ -6,112 +6,116 @@
 #define rep(i,n) for(int i=0;i<n;++i)
 #define rep1(i,n) for(int i=1;i<=n;++i)
 using namespace std;
+template<class T>bool chmax(T &a, const T &b) { if(a < b){ a = b; return 1; } return 0; }
+template<class T>bool chmin(T &a, const T &b) { if(a > b){ a = b; return 1; } return 0; }
 typedef long long ll;
-const ll inf = 1e+16;
-struct Graph
-{
-  vector<int> dat;
-  int n;
-  int m;
-  vector<vector<pair<int,ll>>> edge;
-  vector<ll> d;
+using pi = pair<int,int>;
+//****************************************
+// Graph template
+//****************************************
+
+// status of edge
+template <typename X>
+struct Edge{
+  int from;
+  int to;
+  X cost;
+
+  Edge() = default;
+
+  Edge(int from, int to, X cost) : from(from), to(to), cost(cost) {}
+};
+
+// status of node
+template <typename X>
+struct Node{ 
+  int idx;
+  vector<Edge<X>> edge;
+  X dist;
   
-  Graph(int _n,int _m){
-    n = 1;
-    m = _m;
-    while(n<_n) n*=2;
-    dat.resize(2*(2*n-1)+m);
-    edge.resize(2*(2*n-1)+m);
+  Node() = default;
+
+  explicit Node(int idx) : idx(idx) {}
+};
+
+template <typename X>
+class Graph{
+private:
+  int n; // number of node
+  int m; // number of edge
+  vector<Node<X>> node; 
+
+  X inf = 1e+15;
+  void Init_Node() {
+    rep(i,n) node.emplace_back(i);
+  }
+public:
+  explicit Graph(int n) : n(n) {
+    Init_Node();
   }
 
-  void add(int from,int to,ll cost){
-    edge[from].push_back(make_pair(to,cost));
-  }
-
-  void init(){
-    int index = 2*n-1;
-    rep(i,n-1){
-      add(2*i+1,i,0);
-      add(2*i+2,i,0);
-      add(index+i,index+2*i+1,0);
-      add(index+i,index+2*i+2,0);
+  // edges have no-weight 
+  Graph(int n, int m, vector<int> from, vector<int> to) : n(n), m(m) {
+    Init_Node();
+    rep(i,m) {
+      add_edge(from[i], to[i]);
+      add_edge(to[i], from[i]);      
     }
-    rep(i,n){
-      add(n-1+index+i,n-1+i,0);
-    }
-  }
+  }  
 
-  void update(int a,int b,int k,int l,int r,ll c,int to){
-    if(r<=a||b<=l) return ;
-
-    if(a<=l&&r<=b){
-      add(k,to+2*(2*n-1),c);
-      add(to+2*(2*n-1),k+2*n-1,0);      
-    }
-    else{
-      update(a,b,2*k+1,l,(l+r)/2,c,to);
-      update(a,b,2*k+2,(l+r)/2,r,c,to);      
+  // edges have weight
+  Graph(int n, int m, vector<int> from, vector<int> to, vector<X> cost) : n(n), m(m) {
+    Init_Node();
+    rep(i,m) {
+      add_edge(from[i], to[i], cost[i]);
+      //      add_edge(to[i], from[i], cost[i]);      
     }
   }
 
+  void add_edge(int from, int to, X cost = 1) {
+    node[from].edge.emplace_back(from, to, cost);
+  }
 
-  void dijkstra(int s){
-    d.assign(2*(2*n-1)+m,inf);
-    d[s]=0;
-    priority_queue<pair<ll,int>,vector<pair<ll,int>>,greater<pair<ll,int>>> q;
-    q.push(make_pair(0,s));
-    while(!q.empty()){
-      pair<ll,int> p=q.top();q.pop();
-      int w = p.second;
-      if(d[w]<p.first) continue;
-      for(auto& v:edge[w]){
-	ll c = v.second;
-	int t = v.first;
-	if(d[t]>d[w]+c){
-	  d[t]=d[w]+c;
-	  q.push(make_pair(d[t],t));
+  void Dijkstra(int s) {
+    rep(i,n) node[i].dist = inf;
+    node[s].dist = 0;
+    priority_queue<pi, vector<pi>, greater<pi>> q;
+    q.push({0, s});
+    while( !q.empty() ) {
+      pi p = q.top(); q.pop();
+      int nd = p.first, v = p.second;
+      if(node[v].dist < nd) continue;
+      for(auto next: node[v].edge) {
+	int w = next.to;
+	X cost = next.cost;
+	if(chmin(node[w].dist, node[v].dist + cost)) {
+	  q.push({node[w].dist, w});
 	}
       }
     }
   }
 
-  void show(){
-    rep(i,2*(2*n-1)+m){
-      cout << i << ":" << d[i] << "\n";
-    }
-    rep(i,2*(2*n-1)+m){
-      for(auto& v:edge[i]){
-	cout << i << ":" << v.first << ":" << v.second << "\n";
-      }
-    }
-
+  void Solve() {
+    rep(i,n-1) add_edge(i+1, i, (X)0);
+    Dijkstra(0);
+    cout << (node[n-1].dist == inf ? -1 : node[n-1].dist) << "\n";
   }
   
 };
+
+
 int main()
 {
-  int n,m;
-  cin >> n >> m;
-  vector<int> l(m),r(m);
+  int n,m; cin >> n >> m;
+  vector<int> a(m), b(m);
   vector<ll> c(m);
-  rep(i,m){
-    cin >> l[i] >> r[i] >> c[i];
-    l[i]--;
-    r[i]--;
+  rep(i,m) {
+    cin >> a[i] >> b[i] >> c[i];
+    a[i]--; b[i]--;
   }
 
-  Graph gp(n,m);
-  gp.init();
-  rep(i,m){
-    gp.update(l[i],r[i]+1,0,0,gp.n,c[i],i);
-  }
-
-  gp.dijkstra(gp.n-1);
-
-  if(gp.d[gp.n-1+n-1+2*gp.n-1]==inf) cout << -1 << "\n";
-  else cout << gp.d[gp.n-1+n-1+2*gp.n-1] << "\n";
-
-
+  Graph<ll> gp(n, m, a, b, c);
+  gp.Solve();
   
   return 0;
 }

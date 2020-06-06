@@ -53,25 +53,28 @@ struct mint{
     return res/=a;
   }
 };
-string k;
-int d;
 mint dp[10010][100][2];
 int main()
 {
+  string k;
+  int d;
   cin >> k >> d;
-
+  
   dp[0][0][0].x = 1;
 
-  int ks = k.size();
+  int n = k.size();
   
-  rep(i,ks) rep(j,d) rep(l,2){
-    int ki = k[i] - '0';
-    rep(jj,(l?10:ki+1)){
-      dp[i+1][(j+jj)%d][l||jj<ki] += dp[i][j][l];
+  rep(i,n) rep(j,d) rep(f,2){
+    int x = k[i] - '0';
+    int lim = (f ? 10 : x+1);　
+    rep(dj, lim){
+      int nj = (j + dj) % d;
+      int nf = f || dj < x;
+      dp[i+1][nj][nf] += dp[i][j][f];
     }
   }
 
-  mint res = dp[ks][0][0] + dp[ks][0][1] - 1;
+  mint res = dp[n][0][0] + dp[n][0][1] - 1;
 
   cout << res.x << "\n";
   

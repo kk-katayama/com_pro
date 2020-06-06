@@ -39,7 +39,6 @@ public:
 
   void BFS(int sx, int sy) {
     Init_d();
-
     d[sx][sy] = 0;
     queue<Node> q;
     q.emplace(sx, sy);

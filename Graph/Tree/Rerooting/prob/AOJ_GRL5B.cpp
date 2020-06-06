@@ -8,29 +8,34 @@ using namespace std;
 template<class T>bool chmax(T &a, const T &b) { if(a < b){ a = b; return 1; } return 0; }
 template<class T>bool chmin(T &a, const T &b) { if(a > b){ a = b; return 1; } return 0; }
 typedef long long ll;
-ll M;
+//*******************************************************
+// Rerooting tree
+//*******************************************************
+
+//status of tree
 template <typename X>
 struct Edge{
   int from;
   int to;
   X cost;
-  int idx;
+  int idx; // edge id
   
   Edge() = default;
 
   Edge(int from, int to, X cost, int idx) : from(from), to(to), cost(cost), idx(idx) {}
 };
 
+// status of node
 template <typename X>
 struct Node{
   int idx;
   int par;
   X depth;
-  vector<Edge<X>> edge;
-  map<int,int> to_index;
-  vector<X> dp;
+  vector<Edge<X>> edge; 
+  map<int,int> to_index; // key: edge.to, value: edge.idx
+  vector<X> dp; 
   vector<X> lsum, rsum;
-  int cnt;
+  int cnt; // number of filled dp table
   
   Node() = default;
 
@@ -41,7 +46,8 @@ struct Node{
   void Init_DP() {
     dp.resize(edge.size(), -1);
   }
-  
+
+  // if edges are filled, carry out
   void Make_to_index() {
     rep(i,edge.size()) {
       to_index[edge[i].to] = edge[i].idx;
@@ -50,6 +56,7 @@ struct Node{
     Init_DP();
   }
 
+  // if is_full_dp == true, carry out
   void Make_Sum(X id) {
     int n = dp.size();
     lsum.resize(n+1, id);
@@ -74,27 +81,34 @@ private:
   int n; // number of node
   vector<Node<X>> node;
 
+  void Init_Node() {
+    rep(i,n) node.emplace_back(i);    
+  }
+  
 public:
   Tree() = default;
 
   Tree(int n) : n(n) {
-    rep(i,n) node.emplace_back(i);
+    Init_Node();
   }
 
+  // no-weight
   Tree(int n, vector<int> a, vector<int> b) : n(n) {
-    rep(i,n) node.emplace_back(i);
+    Init_Node();
     rep(i,n-1) {
       add_edge(a[i], b[i]);
       add_edge(b[i], a[i]);  // indirected edge
     }
+    rep(i,n) node[i].Make_to_index();    
   }
 
   Tree(int n, vector<int> a, vector<int> b, vector<X> c) : n(n) {
-    rep(i,n) node.emplace_back(i);
+    Init_Node();
     rep(i,n-1) {
       add_edge(a[i], b[i], c[i]);
       add_edge(b[i], a[i], c[i]);  // indirected edge
     }
+    rep(i,n) node[i].Make_to_index();
   }  
 
   void add_edge(int from, int to, X cost = 1) {
@@ -112,9 +126,8 @@ public:
     }
   }
 
-  void Init_Node(int root) {
+  void Make_root(int root) {
     DFS_Init(root, -1, 0);
-    rep(i,n) node[i].Make_to_index();
   }
   
   X ReRoot(int p, int v) {
@@ -153,6 +166,8 @@ public:
   
 };
 
+
+
 int main()
 {
   int n;cin >> n;
@@ -163,7 +178,6 @@ int main()
   }
 
   Tree<ll> tr(n, a, b, c);
-  tr.Init_Node(0);
   rep(i,n) cout << tr.ReRoot(i, i) << "\n";
   
   return 0;

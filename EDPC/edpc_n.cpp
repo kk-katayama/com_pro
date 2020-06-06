@@ -7,30 +7,29 @@ using namespace std;
 template<class T>bool chmax(T &a, const T &b) { if(a < b){ a = b; return 1; } return 0; }
 template<class T>bool chmin(T &a, const T &b) { if(a > b){ a = b; return 1; } return 0; }
 typedef long long ll;
-vector<ll> a;
-vector<vector<ll>> dp;
-vector<ll> sum;
-ll rec(int left, int right) {
-  if(left + 1 == right) return 0;
-  if(dp[left][right] > 0) return dp[left][right];
-  ll res = 1e+18;
-  for (int i = left + 1; i < right; ++i) {
-    chmin(res, rec(left, i) + rec(i, right) + sum[i] - sum[left] + sum[right] - sum[i]);
-  }
-  return dp[left][right] = res;
-}
-
 int main()
 {
-  int n;cin >> n;
-  a.resize(n);
+  int n; cin >> n;
+  vector<ll> a(n);
   rep(i,n) cin >> a[i];
-  sum.resize(n+1, 0);
+
+  vector<ll> sum(n+1);
+  sum[0] = 0;
   rep(i,n) sum[i+1] = sum[i] + a[i];
+
+  vector<vector<ll>> dp(n+1, vector<ll>(n+1, -1));
   
-  dp.resize(n+1, vector<ll>(n+1, 0));
-  
-  cout << rec(0, n) << "\n";
+  auto rec = [&](auto f, int l, int r)-> ll{
+	       if(r - l == 1) return dp[l][r] = 0;
+	       if(dp[l][r] > 0) return dp[l][r];
+	       ll res = 1e+15;
+	       for (int i = l+1; i < r; ++i) {
+		 chmin(res, f(f, l, i) + f(f, i, r));
+	       }
+	       return dp[l][r] = res + sum[r] - sum[l];
+	     };
+
+  cout << rec(rec, 0, n) << "\n";
   
   return 0;
 }

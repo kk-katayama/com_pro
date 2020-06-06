@@ -25,36 +25,43 @@ template <typename X = int>
 struct Node{ // Status of node
   int idx; // index of node
   double x,y;
-  X dist;
-  int before;
+  X dist[110];
+  vector<Edge<X>> edge;
   
   Node() = default;
 
-  Node(int idx, X dist, int before) : idx(idx), dist(dist), before(before) {}
+  Node(int idx, double x, double y) : idx(idx), x(x), y(y){}
 
-  void Set(int idxx, double xx, double yy) {
-    idx = idxx;
-    x = xx;
-    y = yy;
-  }
+};
 
+template <typename X = int>
+struct Status{ // entered priority_queue
+  int idx;
+  X dist;
+  int before;
   
-  bool operator == (const Node& r) const {
+  Status() = default;
+
+  Status(int idx, X dist, int before) : idx(idx), dist(dist), before(before) {}
+
+  bool operator == (const Status& r) const {
     return (idx == r.idx && dist == r.dist);
   }
 
-  bool operator != (const Node& r) const {
+  bool operator != (const Status& r) const {
     return !(*this == r);
   }
 
-  bool operator < (const Node& r) const { 
+  bool operator < (const Status& r) const {
     return dist > r.dist;
   }
 
-  bool operator > (const Node& r) const {
+  bool operator > (const Status& r) const {
     return dist < r.dist;
-  }  
+  }
+
 };
+
 
 struct Vect{
   double x,y;
@@ -71,38 +78,36 @@ bool eikaku(Vect a, Vect b) {
   return cos > 0.;
 }
 
+
+
 template <typename X = int>
 class Graph{
 private:
   int n; // number of node
   int m; // number of edge
-  vector<vector<Edge<X>>> edge; // edge list
   vector<Node<X>> node; // node list
 
   vector<vector<vector<X>>> d; // d[i][j] := shortest distance from node "i" to node "j"
   const X inf = 1e+9; // initial value of d
+
 public:
   explicit Graph(int n) : n(n) {
-    edge.resize(n);
   }
 
-  Graph(int n, int m, vector<int> from, vector<int> to, vector<X> cost) : n(n), m(m) {
-    edge.resize(n);
+  Graph(int n, int m, vector<int> from, vector<int> to, vector<X> cost, vector<double> x, vector<double> y) : n(n), m(m) {
+    Init_Node(x, y);
     rep(i,m) {
       add_edge(from[i], to[i], cost[i]);
       add_edge(to[i], from[i], cost[i]);      
     }
   }
 
-  void add_edge(int from, int to, X cost) {
-    edge[from].emplace_back(from, to, cost);
+  void add_edge(int from, int to, X cost = 1) {
+    node[from].edge.emplace_back(from, to, cost);
   }
 
-  void Init_node(vector<double> x, vector<double> y) {
-    node.resize(n);
-    rep(i,n) {
-      node[i].Set(i, x[i], y[i]);
-    }    
+  void Init_Node(vector<double> x, vector<double> y) {
+    rep(i,n) node.emplace_back(i, x[i], y[i]);
   }
   
   //*************************************
@@ -111,35 +116,33 @@ public:
   //*************************************
   void dijkstra(int s) { 
     // initalize d
-    d.resize(n);
-    d[s].resize(n, vector<X>(n, inf));
-    d[s][s][0] = 0;
+    rep(i,n) rep(j,n) node[i].dist[j] = inf;
+    node[s].dist[0] = 0;
     
-    priority_queue<Node<X>> pq;
+    priority_queue<Status<X>> pq;
     pq.emplace(s, 0, 0); // pq have (node, shortest distance from start to the node, vector)
     while( !pq.empty() ) {
-      Node<X> now = pq.top(); pq.pop();
+      Status<X> now = pq.top(); pq.pop();
       int v = now.idx; // number of node
       X dis = now.dist; // distance of start from node "v"
       int bef = now.before;
-      if(d[s][v][bef] < dis) continue;
+      if(node[v].dist[bef] < dis) continue;
       Vect vect(node[bef].x - node[v].x, node[bef].y - node[v].y);
-      for(auto next: edge[v]) {
+      for(auto next: node[v].edge) {
 	int w = next.to;
 	X cos = next.cost;
 	Vect vect2(node[w].x - node[v].x, node[w].y - node[v].y);
 	if(eikaku(vect, vect2)) continue;
-	if(chmin(d[s][w][v], d[s][v][bef] + cos)) {
-	  pq.emplace(w, d[s][w][v], v);
+	if(chmin(node[w].dist[v], node[v].dist[bef] + cos)) {
+	  pq.emplace(w, node[w].dist[v], v);
 	}
       }
     }
   }
 
 
-  X Get_d(int start, int goal, int index) {
-    //    if(d[start][goal] == inf) return -1;
-    return d[start][goal][index];
+  X Get_d(int index, int before) {
+    return node[index].dist[before];
   }
   
 };
@@ -155,13 +158,12 @@ int main()
     a[i]--; b[i]--;
   }
 
-  Graph<int> gp(n, m, a, b, c);
-  gp.Init_node(x, y);
+  Graph<int> gp(n, m, a, b, c, x, y);
   gp.dijkstra(0);
 
   int res = 1e+9;
   rep(i,n) {
-    chmin(res, gp.Get_d(0, 1, i));
+    chmin(res, gp.Get_d(1, i));
   }
   if(res == 1e+9) cout << -1 << "\n";
   else cout << res << "\n";

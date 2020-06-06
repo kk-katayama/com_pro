@@ -5,48 +5,56 @@
 #define rep(i,n) for(int i=0;i<n;++i)
 #define rep1(i,n) for(int i=1;i<=n;++i)
 using namespace std;
-//**********************************************************************************
-// KMP法、文字列sの中から文字列tと一致する部分があるかを判定。あるならその文字列が始まる位置を返す
-vector<int> table;
-void kmp_table(string t){
-  int ts = t.size();
-  table.resize(ts+1);
-  table[0] = -1;
-  int j = -1;
-  rep(i,ts){
-    while(j>=0&&t[i]!=t[j]) j = table[j];
-    j++;
-    table[i+1] = j;
+template<class T>bool chmax(T &a, const T &b) { if(a < b){ a = b; return 1; } return 0; }
+template<class T>bool chmin(T &a, const T &b) { if(a > b){ a = b; return 1; } return 0; }
+vector<bool> func(string a, string b, string c) {
+  vector<bool> ab;
+  int na = a.size(), nb = b.size(), nc = c.size();
+  rep(i,nc+1) ab.push_back(1);
+  for(int d = nb-1; d >= 0; --d) {
+    bool f = true;
+    rep(i,min(nb - d, na)) {
+      if(a[i] != b[i+d] && a[i] != '?' && b[i+d] != '?') f = false;
+    }
+    ab.push_back(f);
   }
+
+  for(int d = 1; d < na; ++d) {
+    bool f = true;
+    rep(i,min(na - d, nb)) {
+      if(a[i+d] != b[i] && a[i+d] != '?' && b[i] != '?') f = false;
+    }
+    ab.push_back(f);    
+  }
+  rep(i,nc+1) ab.push_back(1);  
+  return ab;
 }
 
-vector<int> kmp(string s,string t){
-  vector<int> res;
-  kmp_table(t);
-  int ss = s.size(),ts = t.size();
-  bool f = false;
-  int i = 0,j = 0;
-  while(i<ss){
-    while(s[i]==t[j]){
-      i++;j++;
-      if(j==ts){
-	f = true;
-	res.push_back(i-j);
-	break;
-      }
-      if(i==ss) break;
-    }
-    if(j==0) i++;
-    else j = table[j];
-  }
-  return res;
-}
-//*************************************************************************************
 int main()
 {
-  string s,t;cin >> s >> t;
-  vector<int> res = kmp(s,t);
-  rep(i,res.size()) cout << res[i] << "\n";
+  string a,b,c; cin >> a >> b >> c;
+  int na = a.size(), nb = b.size(), nc = c.size();
+  
+  vector<bool> ab = func(a, b, c);
+  vector<bool> bc = func(b, c, a);
+  vector<bool> ac = func(a, c, b);
+
+  int res = 1e+9;
+  rep(i,ab.size()) {
+    rep(j,ac.size()) {
+      int aloc = 0;
+      int bloc = i - nb - nc;
+      int cloc = j - nb - nc;
+      bool fbc = (0 <= j - i + na + nc && j - i + na + nc < bc.size() ? bc[j - i + na + nc] : 1);
+      if(ab[i] && ac[j] && fbc) {
+	int maxi = max({na, bloc + nb, cloc + nc});
+	int mini = min({aloc, bloc, cloc});
+	chmin(res, maxi - mini);
+      }
+    }
+  }
+
+  cout << res << "\n";
   
   return 0;
 }

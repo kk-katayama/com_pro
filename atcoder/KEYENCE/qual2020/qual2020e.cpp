@@ -1,260 +1,116 @@
 #include <iostream>
 #include <algorithm>
 #include <vector>
-#include <queue>
-#include <utility>
 #define rep(i,n) for(int i=0;i<n;++i)
 #define rep1(i,n) for(int i=1;i<=n;++i)
 using namespace std;
-//include <utility>,<queue>
+template<class T>bool chmax(T &a, const T &b) { if(a < b){ a = b; return 1; } return 0; }
+template<class T>bool chmin(T &a, const T &b) { if(a > b){ a = b; return 1; } return 0; }
+//****************************************
+// Graph template
+//****************************************
+
+// status of edge
 template <typename X>
-struct Graph{
-  int node;
-  int edge_num;
-  vector<vector<pair<int,X>>> edge;
-  vector<vector<int>> rev;  
-  vector<X> d;//distance from start
-  vector<vector<X>> d_wf;//distance from i to j at Warshall-Floyd
-  vector<bool> visit;//visited flag
-  vector<bool> f;//Can node 's' visit 'g' ?
-
-  vector<int> color;
-  vector<vector<int>> edge2;
+struct Edge{
+  int from;
+  int to;
+  X cost;
+  int idx;
   
-  const X inf = 1e+9;//initial value
+  Edge() = default;
+
+  Edge(int from, int to, X cost) : from(from), to(to), cost(cost) {}
+  Edge(int from, int to, X cost, int idx) : from(from), to(to), cost(cost), idx(idx) {}  
+};
+
+// status of node
+template <typename X>
+struct Node{ 
+  int idx;
+  vector<Edge<X>> edge;
+  int d;
   
-  //***************Constractor****************************
-  Graph(int n){
-    node = n;
-    edge.resize(node);
-    //    rev.resize(node);
+  Node() = default;
+
+  explicit Node(int idx) : idx(idx) {}
+};
+
+template <typename X>
+class Graph{
+private:
+  int n; // number of node
+  int m; // number of edge
+  vector<Node<X>> node; 
+
+  void Init_Node() {
+    rep(i,n) node.emplace_back(i);
+  }
+public:
+  explicit Graph(int n) : n(n) {
+    Init_Node();
   }
 
-  Graph(int n,int m,vector<int> a,vector<int> b){
-    node = n;
-    edge_num = m;
-    edge2.resize(node);
-    rep(i,edge_num){
-      edge2[a[i]].push_back(b[i]);
-      edge2[b[i]].push_back(a[i]);
-    }
-  }
-
-  Graph(int n,int m,vector<int> a,vector<int> b,vector<X> c){
-    node = n;
-    edge_num = m;
-    edge.resize(node);
-    rep(i,edge_num){
-      edge[a[i]].push_back(make_pair(b[i],c[i]));
-      edge[b[i]].push_back(make_pair(a[i],c[i]));//indirection graph
-    }
-  }
-  //***********************************************
-  
-  void add_edge(int from,int to,X cost){
-    edge[from].push_back(make_pair(to,cost));
-  }
-
-  //********************dijkstra********************************  
-  void dijkstra(int s,X inf){
-    priority_queue<pair<X,int>,vector<pair<X,int>>,greater<pair<X,int>>> pq;
-    d.assign(node,inf);
-    d[s] = 0;
-    pq.push(make_pair(0,s));
-    while(!pq.empty()){
-      pair<X,int> p = pq.top();pq.pop();
-      int v = p.second;
-      if(d[v]<p.first) continue;
-      for(auto &w:edge[v]){
-	if(d[w.first]>d[v]+w.second){
-	  d[w.first] = d[v] + w.second;
-	  pq.push(make_pair(d[w.first],w.first));
-	}
-      }
+  // edges have no-weight 
+  Graph(int n, int m, vector<int> from, vector<int> to) : n(n), m(m) {
+    Init_Node();
+    rep(i,m) {
+      add_edge(from[i], to[i], 0, i);
+      add_edge(to[i], from[i], 0, i);      
     }
   }  
-  //*****************************************************************
 
-  //**********************bellmanford********************************
-  //if graph have negative-loop, return false
-  bool bellmanford(int s){
-    d.assign(node,inf);
-    d[s] = 0;
-    bool flag = true;
-    rep(i,node){
-      rep(v,node){
-	if(d[v]==inf) continue;
-	for(auto w:edge[v]){
-	  if(d[w.first]>d[v] + w.second){
-	    d[w.first] = d[v] + w.second;
-	    if(i==node-1){
-	      //**********need in abc061d and abc137e**************	    
-	      //	      if(f[w.first]){
-	      //		flag = false;
-	      //	      }
-	      flag = false;
-	    }
-	  }
-	}
-      }
+  // edges have weight
+  Graph(int n, int m, vector<int> from, vector<int> to, vector<X> cost) : n(n), m(m) {
+    Init_Node();
+    rep(i,m) {
+      add_edge(from[i], to[i], cost[i]);
+      add_edge(to[i], from[i], cost[i]);      
     }
-    return flag;
   }
 
-  //*****************************************************************
+  void add_edge(int from, int to, X cost = 1) {
+    node[from].edge.emplace_back(from, to, cost);
+  }
 
-  //********************Warshall-Floyd******************************
-  void wf(){
-    d_wf.resize(node,vector<X>(node,inf));
-    rep(v,node){
-      for(auto w:edge[v]){
-	d_wf[v][w.first] = w.second;
-	d_wf[w.first][v] = w.second;
-      }
+  void add_edge(int from, int to, X cost, int idx) {
+    node[from].edge.emplace_back(from, to, cost, idx);
+  }
+
+
+  
+
+  void Build(vector<int> d) {
+    rep(i,n) node[i].d = d[i];
+  }
+
+  void Solve() {
+    int mini = 1e+9+10;
+    int start;
+    rep(i,n) {
+      if(chmin(mini, node[i].d)) start = i;
     }
-    rep(k,node){
-      rep(i,node){
-	rep(j,node){
-	  d_wf[i][j]=min(d_wf[i][j],d_wf[i][k]+d_wf[k][j]);
-	}
+    vector<int> res(m);
+    vector<int> d(n, -1);
+    d[start] = 0;
+    queue<int> q;
+    q.push(start);
+    while( !q.empty() ) {
+      int v = q.front(); q.pop();
+      for(auto next: node[v].edge) {
+	int w = next.to;
+	int idx = next.idx;
+	if(d[w] != -1) res[idx] = 1e+9;
+	
       }
     }
   }
   
-  //**********need in abc061d and abc137e**************	      
-  void add_rev(int from,int to){
-    rev[from].push_back(to);
-  }
-
-  void simple_dfs(int v){
-    visit[v] = true;
-    f[v] = true;
-    for(auto w:rev[v]){
-      if(visit[w]){
-	continue;
-      }
-      simple_dfs(w);
-    }
-  }
-
-  void run_dfs(int g){//check each node can reach goal
-    visit.assign(node,false);
-    f.assign(node,false);
-    f[g] = true;
-    simple_dfs(g);
-  }
-
-
-  //****************nibu-graph*****************
-  bool nibu(int v,int c){
-    color[v] = c;
-    for(auto w:edge2[v]){
-      if(color[w] == c) return false;
-      if(color[w] == 0 && !nibu(w,-c)) return false;
-    }
-    return true;
-  }
-
-  bool solve_nibu(){//if graph is nibu-graph, return true.
-    color.assign(node,0);
-    rep(i,node){
-      if(color[i]==0){
-	if(!nibu(i,1)){
-	  return false; 
-	}
-      }
-    }
-    return true;
-  }
-
-  int get_color(int v){
-    return color[v];
-  }
-  
-  //*************************************************
-  void check_f(){
-    rep(i,node){
-      cout << i << ":" << f[i] << "\n";
-    }
-  }
-
-  X get_d(int v){
-    return d[v];
-  }
-
-  X get_d(int x,int y){
-    return d_wf[x][y];
-  }  
-  //**************************************************
 };
 
 
 int main()
 {
-  int n,m;
-  cin >> n >> m;
-  vector<int> d(n);
-  rep(i,n){
-    cin >> d[i];
-  }
-  vector<int> u(m),v(m),w(m);
-  rep(i,m){
-    cin >> u[i] >> v[i];
-    u[i]--;
-    v[i]--;
-    w[i] = i;
-  }
 
-  const int inf = 1e+9;
-  Graph<int> gp(n,m,u,v,w);
-  vector<pair<int,int>> cut(n,make_pair(0,inf));
-  
-  rep(i,n){
-    bool f = true;
-    int pv = inf;
-    for(auto j:gp.edge[i]){
-      int a = j.first;
-      int b = j.second;
-      if(d[i]>=d[a]){
-  	f = false;
-      }
-      if(d[a]<pv){
-  	cut[i] = make_pair(a,b);
-  	pv = d[a];
-      }
-    }
-    if(f){
-      cout << -1 << "\n";
-      return 0;
-    }
-  }
-
-  vector<int> res(m,inf);
-  vector<int> uu(n),vv(n);
-  rep(i,n){
-    uu[i] = i;
-    vv[i] = cut[i].first;
-  }
-  Graph<int> gp2(n,n,uu,vv);
-  gp2.solve_nibu();
-  rep(i,n){
-    if(cut[i].second!=inf){
-      res[cut[i].second] = d[i];
-    }
-  }
-
-  rep(i,n){
-    if(gp2.get_color(i)==1){
-      cout << "B";
-    }
-    else{
-      cout << "W";
-    }
-  }
-  cout << "\n";
-  rep(i,m){
-    cout << res[i] << "\n";
-  }
-  
   return 0;
 }

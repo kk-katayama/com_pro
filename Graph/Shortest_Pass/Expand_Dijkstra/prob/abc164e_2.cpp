@@ -28,6 +28,7 @@ template <typename X = int>
 struct Node{ // Status of node
   int idx; // index of node
   X dist[2501]; // distance from start node
+  vector<Edge<X>> edge;
   int rate;
   X time;
   
@@ -71,20 +72,17 @@ class Graph{
 private:
   int n; // number of node
   int m; // number of edge
-  vector<vector<Edge<X>>> edge; // edge list
   vector<Node<X>> node; // node list
 
-  vector<vector<vector<X>>> d;
   const X inf = 1e+17; // initial value of d
   int M = 2500;
   
 public:
   explicit Graph(int n) : n(n) {
-    edge.resize(n);
   }
 
-  Graph(int n, int m, vector<int> from, vector<int> to, vector<X> cost, vector<int> charge) : n(n), m(m) {
-    edge.resize(n);
+  Graph(int n, int m, vector<int> from, vector<int> to, vector<X> cost, vector<int> charge, vector<int> rate, vector<X> time) : n(n), m(m) {
+    Init_Node(rate, time);
     rep(i,m) {
       add_edge(from[i], to[i], cost[i], charge[i]);
       add_edge(to[i], from[i], cost[i], charge[i]);      
@@ -92,10 +90,10 @@ public:
   }
 
   void add_edge(int from, int to, X cost, int charge) {
-    edge[from].emplace_back(from, to, cost, charge);
+    node[from].edge.emplace_back(from, to, cost, charge);
   }
 
-  void Init_node(vector<int> rate, vector<X> time) {
+  void Init_Node(vector<int> rate, vector<X> time) {
     rep(i,n) node.emplace_back(i, rate[i], time[i]);
   }
   
@@ -105,12 +103,6 @@ public:
   // s is start node
   //*************************************
   void dijkstra(int s, int g) { 
-    // initalize d
-    // d.resize(n);
-    // d[s].resize(n, vector<X>(M+1, inf));
-    // chmin(g, M);
-    // d[s][s][g] = 0;
-    
     rep(i,n) rep(j,M+1) node[i].dist[j] = inf;
     chmin(g, M);
     node[s].dist[g] = 0;
@@ -132,7 +124,7 @@ public:
       }
       
       if(node[v].dist[coin] < dis) continue; 
-      for(auto next: edge[v]) {
+      for(auto next: node[v].edge) {
 	int w = next.to;
 	X cos = next.cost;
 	int charge = next.charge;
@@ -164,8 +156,7 @@ int main()
   }
   rep(i,n) cin >> c[i] >> d[i];
   
-  Graph<ll> gp(n, m, u, v, b, a);
-  gp.Init_node(c, d);
+  Graph<ll> gp(n, m, u, v, b, a, c, d);
   gp.dijkstra(0, s);
 
   rep1(i,n-1) {

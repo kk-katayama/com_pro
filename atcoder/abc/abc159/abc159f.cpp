@@ -4,6 +4,8 @@
 #define rep(i,n) for(int i=0;i<n;++i)
 #define rep1(i,n) for(int i=1;i<=n;++i)
 using namespace std;
+template<class T>bool chmax(T &a, const T &b) { if(a < b){ a = b; return 1; } return 0; }
+template<class T>bool chmin(T &a, const T &b) { if(a > b){ a = b; return 1; } return 0; }
 typedef long long ll;
 const ll MOD=998244353;
 struct mint{
@@ -53,47 +55,29 @@ struct mint{
     return res/=a;
   }
 };
-mint dp[3100][3100];
+
 int main()
 {
-  int n,s;cin >> n >> s;
+  int n,s; cin >> n >> s;
   vector<int> a(n);
   rep(i,n) cin >> a[i];
-  // vector<vector<mint>> dp(n+1,vector<mint>(s+1));
-  // dp[0][0].x = 1;
-
-  // mint res;
-  // rep(st,n){
-  //   rep(i,n+1) rep(j,s+1) dp[i][j].x = 0;
-  //   dp[st][0].x = 1;
-  //   for( int i = st;i < n;++i){
-  //     rep(j,s+1){
-  // 	if(j - a[i] >= 0) dp[i+1][j] = dp[i][j - a[i]] + dp[i][j];
-  // 	else dp[i+1][j] = dp[i][j];
-  //     }
-  //   }
-  //   for( int i = st;i <= n;++i) res += dp[i][s];
-  // }
-  // cout << res.x << "\n";
-
-
-  mint res;
-  rep(i,n+1) rep(j,s+1) dp[i][j].x = 0;
-  rep(i,n+1){
-    rep(j,s+1){
-      if(j - a[i] >= 0) dp[i+1][j] = dp[i][j - a[i]] + dp[i][j];
-      else dp[i+1][j] = dp[i][j];
+  
+  vector<vector<vector<mint>>> dp(n+1, vector<vector<mint>>(s+1, vector<mint>(3)));
+  dp[0][0][0].x = 1;
+  rep(i,n) {
+    rep(j,s+1) {
+      rep(k,3) {
+	for (int l = 2; l >= k; --l) {
+	  dp[i+1][j][l] += dp[i][j][k]; // not add
+	  if(k == 0 && l == 0) continue;
+	  if(k == 2 && l == 2) continue;
+	  if(j + a[i] <= s) dp[i+1][j + a[i]][l] += dp[i][j][k];
+	}
+      }
     }
-    dp[i+1][0] += (mint)1;
-    dp[i+1][a[i]] += (mint)1;
   }
 
-  // rep(i,n+1){
-  //   rep(j,s+1) cout << dp[i][j].x << " ";
-  //   cout  << "\n";
-  // }
-
-  rep(i,n+1) res += dp[i][s];
-  cout << res.x << "\n";
+  cout << dp[n][s][2].x << "\n";
+  
   return 0;
 }

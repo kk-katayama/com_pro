@@ -24,7 +24,7 @@ int main()
   // 集合maskを部分集合にもつような集合を全探索
   cout << "include_mask" << "\n";
   for(int i=mask;i<(1<<8);i=(i+1)|mask){
-    cout << bitset<8>(i) << "\n";
+    //    cout << bitset<8>(i) << "\n";
   }
 
   return 0;

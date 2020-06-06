@@ -4,6 +4,8 @@
 #define rep(i,n) for(int i=0;i<n;++i)
 #define rep1(i,n) for(int i=1;i<=n;++i)
 using namespace std;
+template<class T>bool chmax(T &a, const T &b) { if(a < b){ a = b; return 1; } return 0; }
+template<class T>bool chmin(T &a, const T &b) { if(a > b){ a = b; return 1; } return 0; }
 typedef long long ll;
 const ll MOD=1e+9+7;
 struct mint{
@@ -53,7 +55,8 @@ struct mint{
     return res/=a;
   }
 };
-const int NMAX=200010;
+
+const int NMAX=200010; // we can calculate nCk until n is equal to NMAX
 mint fact[NMAX],infac[NMAX];
 void Make_Fact(){
   fact[0]=fact[1]=1;
@@ -72,49 +75,26 @@ mint Comb(int n,int k){
   return fact[n]*infac[k]*infac[n-k];
 }
 
+mint pow2[400010];
+
 int main()
 {
-  int n;
-  cin >> n;
-  vector<ll> c(n);
-  rep(i,n){
-    cin >> c[i];
-  }
+  int n; cin >> n;
+  vector<int> c(n);
+  rep(i,n) cin >> c[i];
+
   sort(c.begin(), c.end());
-
-  vector<mint> pow2(n+1);
+  reverse(c.begin(), c.end());
+  
   pow2[0].x = 1;
-  rep1(i,n){
-    pow2[i] = pow2[i-1]*(mint)2;
+  rep(i,400000) {
+    pow2[i+1] = pow2[i]*(mint)2;
   }
-
-  Make_Fact();
-  Make_InvFact();
-  
-  vector<mint> cof(n);
-  // rep(i,n){
-  //   rep(j,i+1){
-  //     cof[i] += (mint)(j+1)*Comb(i,j);
-  //   }
-  // }
-  cof[0].x = 1;
-  rep1(i,n-1){
-    cof[i] = (mint)(i+2)*pow2[i-1];
-  }
-
-  
-  // rep(i,n){
-  //   cout << cof[i].x << "\n";
-  // }
-
 
   mint res;
-  rep(i,n){
-    res += (mint)c[i]*pow2[i]*cof[n-1-i];
+  rep(i,n) {
+    res += (mint)c[i] * pow2[2*(n-i-1)] * pow2[2*i] * (mint)(i+2);
   }
-
-  res *= pow2[n];
-  
   cout << res.x << "\n";
   
   return 0;

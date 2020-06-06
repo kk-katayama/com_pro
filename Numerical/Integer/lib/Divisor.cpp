@@ -5,7 +5,7 @@ vector<int> divisor(int x){
     if(x%i==0){
       res.push_back(i);
       if(i!=x/i){
-	res.push_back(n/i);
+	res.push_back(x/i);
       }
     }
   }

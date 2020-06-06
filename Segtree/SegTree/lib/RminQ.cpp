@@ -1,14 +1,16 @@
 #include <iostream>
 #include <algorithm>
 #include <vector>
+#include <functional>
 #define rep(i,n) for(int i=0;i<n;++i)
 #define rep1(i,n) for(int i=1;i<=n;++i)
 using namespace std;
 typedef long long ll;
-template <typename F,typename T>
+template <typename T>
 struct SegTree{
+  using F = function<T(T, T)>;
   T identity;
-  F merge;
+  F merge; // 二項演算
   int size;
   vector<T> dat;
   
@@ -74,7 +76,7 @@ int main()
   rep(i,q) cin >> c[i] >> x[i] >> y[i];
   auto f = [&](int a,int b){ return min(a,b);};
   ll id = (1LL<<31)-1;
-  SegTree<decltype(f),ll> seg(f,id);
+  SegTree<ll> seg(f,id);
   seg.init(n);
   rep(i,q){
     if(c[i]==0) seg.update(x[i],y[i]);
