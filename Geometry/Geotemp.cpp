@@ -54,7 +54,7 @@ struct Circle {
 };
 
 //******************** 2点間の距離 *******************
-double Dist(Vec2 &A, Vec2 &B) { return (A - B).length(); } 
+ld Dist(Vec2 &A, Vec2 &B) { return (A - B).length(); } 
 //*****************ベクトルVをTheta回転******************
 Vec2 Rot(Vec2 &V, ld Theta) {
   return Vec2(V.x * cos(Theta) - V.y * sin(Theta), V.x * sin(Theta) + V.y * cos(Theta));
@@ -297,8 +297,8 @@ vector<Vec2> ConvexHull(vector<Vec2> &V) {
   //************ 偏角ソート **********
   // 偏角が同じものはスタートからの距離が遠いほど先に配置
   sort(V.begin(), V.end(), [&](Vec2 a, Vec2 b) {
-			     double adx = a.x - O.x, ady = a.y - O.y;
-			     double bdx = b.x - O.x, bdy = b.y - O.y;
+			     ld adx = a.x - O.x, ady = a.y - O.y;
+			     ld bdx = b.x - O.x, bdy = b.y - O.y;
 			     if(abs(adx) < EPS && abs(ady) < EPS) return true;
 			     else if(abs(bdx) < EPS && abs(bdy) < EPS) return false;
                              else if(abs(atan2(ady, adx) - atan2(bdy, bdx)) < EPS ) {
@@ -365,11 +365,11 @@ ld Caliper(const vector<Vec2> &V) {
 //*********** 最近点対**********************
 // 引数は(点集合、0、点集合のサイズ)
 // 予め点集合をソートしておくこと
-double ClosestPair(vector<Vec2> &v, int l, int r) {
+ld ClosestPair(vector<Vec2> &v, int l, int r) {
   if(r - l <= 1) return 1e+15;
   int mid = (l + r) / 2;
   Vec2 O = v[mid];
-  double d = min(ClosestPair(v, l, mid), ClosestPair(v, mid, r));
+  ld d = min(ClosestPair(v, l, mid), ClosestPair(v, mid, r));
   sort(v.begin() + l, v.begin() + r, [](Vec2 a, Vec2 b) {
 				       return a.y < b.y;
 				     });
