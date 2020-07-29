@@ -4,43 +4,37 @@
 #define rep(i,n) for(int i=0;i<n;++i)
 #define rep1(i,n) for(int i=1;i<=n;++i)
 using namespace std;
+template<class T>bool chmax(T &a, const T &b) { if(a < b){ a = b; return 1; } return 0; }
+template<class T>bool chmin(T &a, const T &b) { if(a > b){ a = b; return 1; } return 0; }
 typedef long long ll;
 int main()
 {
   int n;
-  cin >> n;
   ll k;
-  cin >> k;
+  cin >> n >> k;
   vector<ll> a(n);
-  bool f = false;
-  rep(i,n){
+  rep(i,n) {
     cin >> a[i];
-    if(a[i]==0){
-      f = true;
+  }
+  rep(i,n) {
+    if(a[i] == 0) {
+      cout << n << "\n";
+      return 0;
     }
   }
-  if(f){
-    cout << n << "\n";
-    return 0;
-  }
-  int s=0,t=0,res=0;
-  ll pr=a[0];
-  while(1){
-    if(pr<=k){
-      res = max(res,t-s+1);
-      t++;
-      if(t==n) break;
-      pr *= a[t];
+
+  int right = 0;
+  ll sum = 1;
+  int res = 0;
+  rep(left,n) {
+    while(right < n && sum * a[right] <= k) {
+      sum *= a[right];
+      right++;
     }
-    else{
-      pr /= a[s];
-      s++;
-      if(s>t){
-	t++;
-	if(t==n) break;
-	pr *= a[t];
-      }
-    }
+
+    chmax(res, right - left);
+    if(right == left) right++;
+    else sum /= a[left];
   }
   cout << res << "\n";
   return 0;

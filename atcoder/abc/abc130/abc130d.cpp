@@ -1,27 +1,34 @@
 #include <iostream>
 #include <algorithm>
 #include <vector>
-#define rep(i,n) for(int i=0;i<n;++i)
-#define rep1(i,n) for(int i=1;i<=n;++i)
+#include <string>
+#include <utility>
+#define rep(i,n) for(int i = 0; i < n; ++i)
+#define rep1(i,n) for(int i = 1; i <= n; ++i)
+#define F first
+#define S second
 using namespace std;
-typedef long long ll;
+template<class T>bool chmax(T &a, const T &b) { if(a < b){ a = b; return 1; } return 0; }
+template<class T>bool chmin(T &a, const T &b) { if(a > b){ a = b; return 1; } return 0; }
+using ll = long long;
+using pi = pair<int,int>;
 int main()
 {
-  ll n,k;
-  cin >> n >> k;
+  ll n; cin >> n;
+  ll k; cin >> k;
   vector<ll> a(n);
   rep(i,n) cin >> a[i];
-  ll s=0,t=0;
-  ll sum=a[0],res=0;
-  while(s<n&&t<n){
-    if(sum>=k){
-      res += n-t;
-      if(s==t){ s++;t++;sum=a[t]; }
-      else{ sum-=a[s];s++; }
-    }
-    else{
-      t++;sum+=a[t];
-    }
+
+  vector<ll> sum(n+1);
+  sum[0] = 0;
+  rep(i,n) sum[i+1] = sum[i] + a[i];
+
+  ll lb = 0, ub = 1;
+  ll res = 0;
+  while(ub <= n) {
+    while(ub <= n && sum[ub] - sum[lb] < k) ub++;
+    res += n - ub + 1;
+    lb++;
   }
   cout << res << "\n";
   

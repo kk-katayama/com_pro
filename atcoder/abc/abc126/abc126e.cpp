@@ -1,56 +1,92 @@
 #include <iostream>
 #include <algorithm>
 #include <vector>
+#include <string>
 #include <utility>
-#define rep(i,n) for(int i=0;i<n;++i)
-#define rep1(i,n) for(int i=1;i<=n;++i)
+#define rep(i,n) for(int i = 0; i < n; ++i)
+#define rep1(i,n) for(int i = 1; i <= n; ++i)
 using namespace std;
-template<typename X>
+template<class T>bool chmax(T &a, const T &b) { if(a < b){ a = b; return 1; } return 0; }
+template<class T>bool chmin(T &a, const T &b) { if(a > b){ a = b; return 1; } return 0; }
+//****************************************
+// Graph template
+//****************************************
+
+// status of edge
+template <typename X>
+struct Edge{
+  int from;
+  int to;
+  X cost;
+
+  Edge() = default;
+
+  Edge(int from, int to, X cost) : from(from), to(to), cost(cost) {}
+};
+
+// status of node
+template <typename X>
+struct Node{ 
+  int idx;
+  vector<Edge<X>> edge;
+  
+  Node() = default;
+
+  explicit Node(int idx) : idx(idx) {}
+};
+
+template <typename X>
 class Graph{
 private:
-  int n;// 頂点数
-  int m;// 辺の数
-  //  vector<vector<pair<int,X>>> edge;// コスト付きの辺
-  vector<vector<int>> edge; // コストなしの辺
-  vector<bool> f;
+  int n; // number of node
+  int m; // number of edge
+  vector<Node<X>> node; 
+
+  void Init_Node() {
+    rep(i,n) node.emplace_back(i);
+  }
 public:
-  // 頂点数_nのグラフを作成
-  Graph(int _n){ n = _n; edge.resize(n);  }
-  //辺コストなしのグラフ作成、_n頂点、_m辺、a[i]->b[i]の辺がある。
-  Graph(int _n,int _m,vector<int> a,vector<int> b){
-    n = _n;m = _m;edge.resize(n);
-    rep(i,m){
-      edge[a[i]].push_back(b[i]);
-      edge[b[i]].push_back(a[i]); // 有向グラフ
+  explicit Graph(int n) : n(n) {
+    Init_Node();
+  }
+
+  // edges have no-weight 
+  Graph(int n, int m, vector<int> from, vector<int> to) : n(n), m(m) {
+    Init_Node();
+    rep(i,m) {
+      add_edge(from[i], to[i]);
+      add_edge(to[i], from[i]);      
+    }
+  }  
+
+  // edges have weight
+  Graph(int n, int m, vector<int> from, vector<int> to, vector<X> cost) : n(n), m(m) {
+    Init_Node();
+    rep(i,m) {
+      add_edge(from[i], to[i], cost[i]);
+      add_edge(to[i], from[i], cost[i]);      
     }
   }
-  // 辺コストありのグラフ作成、_n頂点、_m辺、a[i]->b[i]のコストc[i]の辺がある。
-  // Graph(int _n,int _m,vector<int> a,vector<int> b,vector<X> c){
-  //   n = _n;m = _m;edge.resize(n);
-  //   rep(i,m){
-  //     edge[a[i]].push_back({b[i],c[i]});
-  //     edge[b[i]].push_back({a[i],c[i]}); //有向グラフ
-  //   }
-  // }  
 
-  // 辺の追加 コストなし
-  //  void add_edge(int from,int to){ edge[from].push_back(to);}
-  // 辺の追加 コストあり
-  //  void add_edge(int from,int to,X cost){ edge[from].push_back({to,cost});}
-
-  void dfs(int v){
-    if(f[v]) return ;
-    f[v] = true;
-    for(auto w:edge[v]) dfs(w);
+  void add_edge(int from, int to, X cost = 1) {
+    node[from].edge.emplace_back(from, to, cost);
   }
-
-  void solve(){
+  vector<bool> f;
+  void Dfs(int v) {
+    f[v] = false;
+    for(auto next: node[v].edge) {
+      int w = next.to;
+      if(f[w]) Dfs(w);
+    }
+  }
+  
+  void Solve() {
     int res = 0;
-    f.assign(n,0);
-    rep(i,n){
-      if(!f[i]){
+    f.assign(n, true);
+    rep(i,n) {
+      if(f[i]) {
 	res++;
-	dfs(i);
+	Dfs(i);
       }
     }
     cout << res << "\n";
@@ -58,13 +94,16 @@ public:
   
 };
 
+
 int main()
 {
-  int n,m;cin >> n >> m;
+  int n,m; cin >> n >> m;
   vector<int> x(m),y(m),z(m);
-  rep(i,m){ cin >> x[i] >> y[i] >> z[i];x[i]--;y[i]--;}
-  Graph<int> gp(n,m,x,y);
-  gp.solve();
-  
+  rep(i,m) {
+    cin >> x[i] >> y[i] >> z[i];
+    x[i]--; y[i]--;
+  }
+  Graph<int> gp(n, m, x, y);
+  gp.Solve();
   return 0;
 }

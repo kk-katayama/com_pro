@@ -1,10 +1,17 @@
 #include <iostream>
 #include <algorithm>
 #include <vector>
-#define rep(i,n) for(int i=0;i<n;++i)
-#define rep1(i,n) for(int i=1;i<=n;++i)
+#include <string>
+#include <utility>
+#define rep(i,n) for(int i = 0; i < n; ++i)
+#define rep1(i,n) for(int i = 1; i <= n; ++i)
+#define F first
+#define S second
 using namespace std;
-typedef long long ll;
+template<class T>bool chmax(T &a, const T &b) { if(a < b){ a = b; return 1; } return 0; }
+template<class T>bool chmin(T &a, const T &b) { if(a > b){ a = b; return 1; } return 0; }
+using ll = long long;
+using pi = pair<int,int>;
 const ll MOD=1e+9+7;
 struct mint{
   ll x;
@@ -54,38 +61,31 @@ struct mint{
   }
 };
 
+
 int main()
 {
-  int n,m;
-  cin >> n >> m;
+  int n,m; cin >> n >> m;
   vector<int> s(n),t(m);
   rep(i,n) cin >> s[i];
   rep(i,m) cin >> t[i];
 
-  vector<vector<mint>> dp(n,vector<mint>(m));
-  vector<vector<mint>> sum(n+1,vector<mint>(m+1));
-  rep(i,n){
-    rep(j,m){
-      if(s[i]==t[j]){
-	dp[i][j] = sum[i][j]+(mint)1;
+  vector<vector<mint>> dp(n+1, vector<mint>(m+1));
+  vector<vector<mint>> sum(n+1, vector<mint>(m+1));  
+  rep(i,n) {
+    rep(j,m) {
+      if(s[i] == t[j]) {
+	dp[i+1][j+1] = sum[i][j] + (mint)1;
       }
-      sum[i+1][j+1] = dp[i][j]+sum[i][j+1]+sum[i+1][j]-sum[i][j];
+      sum[i+1][j+1] = sum[i][j+1] + sum[i+1][j] - sum[i][j] + dp[i+1][j+1];
     }
   }
-
-  // rep(i,n){
-  //   rep(j,m) cout << dp[i][j].x << " ";
-  //   cout  << "\n";
-  // }
-
-  // rep(i,n+1){
-  //   rep(j,m+1) cout << sum[i][j].x << " ";
-  //   cout  << "\n";
-  // }
-
   mint res(1);
-  rep(i,n) rep(j,m) res += dp[i][j];
+  rep(i,n+1) {
+    rep(j,m+1) {
+      res += dp[i][j];
+    }
+  }
   cout << res.x << "\n";
-
+  
   return 0;
 }

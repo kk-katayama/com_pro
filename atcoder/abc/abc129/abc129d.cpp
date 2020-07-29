@@ -2,82 +2,73 @@
 #include <algorithm>
 #include <vector>
 #include <string>
-#define rep(i,n) for(int i=0;i<n;++i)
-#define rep1(i,n) for(int i=1;i<=n;++i)
+#include <utility>
+#include <set>
+#define rep(i,n) for(int i = 0; i < n; ++i)
+#define rep1(i,n) for(int i = 1; i <= n; ++i)
+#define F first
+#define S second
 using namespace std;
-int h,w;
-vector<int> row[2100],col[2100];
-
-int height(int j,int x){
-  int lb=0,ub=col[j].size()+1;
-  while(ub-lb>1){
-    int mid=(lb+ub)/2;
-    if(col[j][mid]<x) lb=mid;
-    else ub=mid;
-  }
-  int left=col[j][lb];
-  lb=0;ub=col[j].size()+1;
-  while(ub-lb>1){
-    int mid=(lb+ub)/2;
-    if(col[j][mid]>x) ub=mid;
-    else lb=mid;
-  }  
-  return col[j][ub]-left-1;
-}
-
-int width(int i,int x){
-  int lb=0,ub=row[i].size()+1;
-  while(ub-lb>1){
-    int mid=(lb+ub)/2;
-    if(row[i][mid]<x) lb=mid;
-    else ub=mid;
-  }
-  int left=row[i][lb];
-  lb=0;ub=row[i].size()+1;
-  while(ub-lb>1){
-    int mid=(lb+ub)/2;
-    if(row[i][mid]>x) ub=mid;
-    else lb=mid;
-  }  
-  return row[i][ub]-left-1;
-}
-
-
+template<class T>bool chmax(T &a, const T &b) { if(a < b){ a = b; return 1; } return 0; }
+template<class T>bool chmin(T &a, const T &b) { if(a > b){ a = b; return 1; } return 0; }
+using ll = long long;
+using pi = pair<int,int>;
 int main()
 {
-  cin >> h >> w;
-  vector<string> s(h);
-  rep(i,h) cin >> s[i];
+  int h,w; cin >> h >> w;
+  vector<vector<char>> s(h, vector<char>(w));
+  rep(i,h) rep(j,w) cin >> s[i][j];
 
-  rep1(i,h){
-    row[i].push_back(0);
-    rep(j,w) if(s[i-1][j]=='#') row[i].push_back(j+1);
-    row[i].push_back(w+1);
+  vector<vector<int>> L(h, vector<int>(w));
+  vector<vector<int>> R(h, vector<int>(w));  
+  vector<vector<int>> U(h, vector<int>(w));
+  vector<vector<int>> D(h, vector<int>(w));
+
+  rep(i,h) {
+    int cnt = 0;
+    rep(j,w) {
+      if(s[i][j] == '.') cnt++;
+      else cnt = 0;
+      L[i][j] = cnt;
+    }
   }
 
-  rep1(j,w){
-    col[j].push_back(0);
-    rep(i,h) if(s[i][j-1]=='#') col[j].push_back(i+1);
-    col[j].push_back(h+1);
+  rep(i,h) {
+    int cnt = 0;
+    rep(j,w) {
+      if(s[i][w-1-j] == '.') cnt++;
+      else cnt = 0;
+      R[i][w-1-j] = cnt;
+    }
   }  
 
-  // rep1(i,h){
-  //   rep(j,row[i].size()) cout << row[i][j] << " ";
-  //   cout  << "\n";
-  // }
+  rep(j,w) {
+    int cnt = 0;
+    rep(i,h) {
+      if(s[i][j] == '.') cnt++;
+      else cnt = 0;
+      U[i][j] = cnt;
+    }
+  }
 
-  // rep1(j,w){
-  //   rep(i,col[j].size()) cout << col[j][i] << " ";
-  //   cout  << "\n";
-  // }
+  rep(j,w) {
+    int cnt = 0;
+    rep(i,h) {
+      if(s[h-1-i][j] == '.') cnt++;
+      else cnt = 0;
+      D[h-1-i][j] = cnt;
+    }
+  }  
 
   int res = 0;
-  rep1(i,h) rep1(j,w){
-    if(s[i-1][j-1]=='#') continue;
-    //    cout << i << ":" << j << ":" << width(i,j) << ":" << height(j,i) << "\n";
-    int kk = width(i,j)+height(j,i)-1;
-    res = max(res,kk);
+  rep(i,h) {
+    rep(j,w) {
+      if(s[i][j] == '.') {
+	chmax(res, L[i][j] + R[i][j] + U[i][j] + D[i][j] - 3);
+      }
+    }
   }
   cout << res << "\n";
+  
   return 0;
 }

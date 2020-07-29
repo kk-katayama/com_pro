@@ -2,10 +2,16 @@
 #include <algorithm>
 #include <vector>
 #include <string>
-#define rep(i,n) for(int i=0;i<n;++i)
-#define rep1(i,n) for(int i=1;i<=n;++i)
+#include <utility>
+#define rep(i,n) for(int i = 0; i < n; ++i)
+#define rep1(i,n) for(int i = 1; i <= n; ++i)
+#define F first
+#define S second
 using namespace std;
-typedef long long ll;
+template<class T>bool chmax(T &a, const T &b) { if(a < b){ a = b; return 1; } return 0; }
+template<class T>bool chmin(T &a, const T &b) { if(a > b){ a = b; return 1; } return 0; }
+using ll = long long;
+using pi = pair<int,int>;
 const ll MOD=1e+9+7;
 struct mint{
   ll x;
@@ -55,25 +61,26 @@ struct mint{
   }
 };
 
+
 int main()
 {
-  string s;cin >> s;
-  int n=s.size();
-  vector<vector<mint>> dp(n+1,vector<mint>(2));
+  string s; cin >> s;
+  int n = s.size();
+  vector<vector<mint>> dp(n+1, vector<mint>(2));
   dp[0][0].x = 1;
-  rep(i,n){
-    if(s[i]=='0'){
-      dp[i+1][0] += dp[i][0];
-      dp[i+1][1] += dp[i][1]*(mint)3;
-    }
-    else{
+
+  rep(i,n) {
+    if(s[i] == '1') {
+      dp[i+1][1] += dp[i][1]*(mint)3 + dp[i][0];
       dp[i+1][0] += dp[i][0]*(mint)2;
-      dp[i+1][1] += dp[i][0]+dp[i][1]*(mint)3;
+    }
+    else {
+      dp[i+1][1] += dp[i][1]*(mint)3;
+      dp[i+1][0] += dp[i][0];
     }
   }
 
-  mint res = dp[n][0]+dp[n][1];
-  cout << res.x << "\n";
+  cout << (dp[n][0] + dp[n][1]).x << "\n";
   
   return 0;
 }

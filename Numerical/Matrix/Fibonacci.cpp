@@ -138,10 +138,11 @@ int main()
   vec[1][0].x = 1;
   vec[1][1].x = 0;  
 
-  rep1(i,n){
-    Matrix<mint> A(vec);
-    A =  A.pow(i);
-    cout << A.mat[1][0].x << "\n";
-  }
+  Matrix<mint> A(vec);
+  A =  A.pow(n); 
+  cout << A.mat[1][0].x << "\n"; 
+  // rep1(i,n){
+  //   cout << A.mat[1][0].x << "\n";
+  // }
   return 0;
 }
