@@ -19,7 +19,32 @@ using ll = long long;
 using pi = pair<int,int>;
 int main()
 {
-  int r; cin >> r;
-  cout << r*r << "\n";
+  int n,k; cin >> n >> k;
+  vector<int> x(n);
+  vector<int> v(n+1);
+  rep(i,n) {
+    cin >> x[i];
+    v[x[i]] = i + 1;
+  }
+  set<int> st;
+  rep(i,k) {
+    st.insert(x[i]);
+  }
+  auto it1 = st.end();
+  it1--;
+  int piv = *it1;
+  cout << v[piv] << "\n";
+  
+  for (int i = k; i < n; ++i) {
+    st.insert(x[i]);
+    auto it = st.find(piv);
+    if(piv > x[i]) {
+      it--;
+    }
+    piv = *it;
+    cout << v[piv] << "\n";
+  }
+
+  
   return 0;
 }

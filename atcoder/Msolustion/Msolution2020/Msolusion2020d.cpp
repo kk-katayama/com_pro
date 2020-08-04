@@ -19,7 +19,26 @@ using ll = long long;
 using pi = pair<int,int>;
 int main()
 {
-  int r; cin >> r;
-  cout << r*r << "\n";
+  ll n; cin >> n;
+  vector<ll> a(n+1);
+  rep(i,n) cin >> a[i];
+
+  a[n] = 0;
+  ll kane = 1000;
+  ll kabu = 0;
+  ll bef = 300;
+  rep(i,n) {
+    if(a[i] <= bef && a[i] < a[i+1]) {
+      kabu += kane / a[i];
+      kane -= kane / a[i] * a[i];
+    }
+    if(bef <= a[i] && a[i+1] < a[i]) {
+      kane += kabu * a[i];
+      kabu = 0;
+    }
+    bef = a[i];
+  }
+  cout << kane << "\n";
+  
   return 0;
 }

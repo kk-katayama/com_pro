@@ -19,7 +19,8 @@ using ll = long long;
 using pi = pair<int,int>;
 int main()
 {
-  int r; cin >> r;
-  cout << r*r << "\n";
+  int n; cin >> n;
+  if(n >= 30) cout << "Yes" << "\n";
+  else cout << "No" << "\n";
   return 0;
 }

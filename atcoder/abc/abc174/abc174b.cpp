@@ -19,7 +19,13 @@ using ll = long long;
 using pi = pair<int,int>;
 int main()
 {
-  int r; cin >> r;
-  cout << r*r << "\n";
+  int n; cin >> n;
+  ll d; cin >> d;
+  int res = 0;
+  rep(i,n) {
+    ll x,y; cin >> x >> y;
+    if(d*d >= x*x + y*y) res++;
+  }
+  cout << res << "\n";
   return 0;
 }

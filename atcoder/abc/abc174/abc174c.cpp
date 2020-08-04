@@ -19,7 +19,23 @@ using ll = long long;
 using pi = pair<int,int>;
 int main()
 {
-  int r; cin >> r;
-  cout << r*r << "\n";
+  int n; cin >> n;
+  map<int,int> mp;
+  int x = 7;
+  int res = 1;
+  while(1) {
+    int tmp = x % n;
+    if(mp[tmp] > 0) {
+      cout << -1 << "\n";
+      return 0;
+    }
+    mp[tmp]++;
+    if(tmp == 0) {
+      cout << res << "\n";
+      return 0;
+    }
+    res++;
+    x = tmp*10 + 7;
+  }
   return 0;
 }

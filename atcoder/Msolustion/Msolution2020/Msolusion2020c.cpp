@@ -19,7 +19,16 @@ using ll = long long;
 using pi = pair<int,int>;
 int main()
 {
-  int r; cin >> r;
-  cout << r*r << "\n";
+  int n; cin >> n;
+  int k; cin >> k;
+  vector<int> a(n);
+  rep(i,n) cin >> a[i];
+
+  for (int i = k; i < n; ++i) {
+    if(a[i-k] < a[i]) cout << "Yes" << "\n";
+    else cout << "No" << "\n";
+  }
+
+  
   return 0;
 }

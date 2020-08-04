@@ -4,82 +4,67 @@
 #define rep(i,n) for(int i=0;i<n;++i)
 #define rep1(i,n) for(int i=1;i<=n;++i)
 using namespace std;
-typedef long long ll;
-// 
-template <typename F,typename T>
-struct SegTree{
-  T identity;
-  F merge;
-  int size;
-  vector<T> dat;
+template <typename X>
+struct RMQ{
+  int n;
+  vector<X> dat;
+  X init;
   
-  SegTree(F f,T id):merge(f),identity(id){}
-
-  // initialize (n is number of elements)
-  void init(int n){
-    size = 1;
-    while(size<n) size *= 2;
-    dat.resize(size*2-1,identity);
+  RMQ(int _n,X _init)
+  {
+    n = 1;
+    init = _init;
+    while(n < _n) n *= 2;
+    dat.resize(2*n-1);
+    rep(i,2*n-1){
+      dat[i] = init;
+    }
   }
 
-  // initialize 
-  void build(vector<T> vec){
-    rep(i,vec.size()) dat[size-1+i] = vec[i];
-    dfs(0);
-  }
-
-  T dfs(int k){
-    if(k>=size-1) return dat[k];
-    else return dat[k] = merge(dfs(2*k+1),dfs(2*k+2));
-  }
-
-  void update(int k,T a){
-    k += size - 1;
+  void update(int k,X a)
+  {
+    k += n - 1;
     dat[k] = a;
     while(k > 0){
-      k = (k-1)/2;
-      dat[k] = merge(dat[2*k+1],dat[2*k+2]);
+      k = (k - 1)/2;
+      dat[k] = max(dat[2*k+1],dat[2*k+2]);
     }
   }
 
-  // return query for [a,b). (k,l,r) = (0,0,seg.size)
-  T query(int a,int b,int k,int l,int r){
-    // out of range
-    if(r<=a||b<=l) return identity;
-    
-    if(a<=l&&r<=b) return dat[k]; 
-    else return merge(query(a,b,2*k+1,l,(l+r)/2),query(a,b,2*k+2,(l+r)/2,r));
+  X query(int a,int b,int k,int l,int r)
+  {
+    if(r<=a||b<=l) return init;
+
+    if(a<=l&&r<=b) return dat[k];
+    else{
+      X vl = query(a,b,2*k+1,l,(l+r)/2);
+      X vr = query(a,b,2*k+2,(l+r)/2,r);
+
+      return max(vl,vr);
+    }
   }
-  
-  void show(){
-    int index = 0;
-    int num = 1;
-    while(index<size){
-      rep(i,num){
-	if(dat[i+index]==identity) cout << "e ";
-	else cout << dat[i+index] << " ";
-      }
-      cout << "\n";
-      num *= 2;
-      index = index*2+1;
+};
+int _n,q;
+int a[100010];
+int com[100010],x[100010],y[100010];
+const int MIN = -(1e+9+1); 
+int main()
+{
+  cin >> _n >> q;
+  rep(i,_n) cin >> a[i];
+  rep(i,q) cin >> com[i] >> x[i] >> y[i];
+
+  RMQ<int> r(_n,MIN);
+
+  rep(i,_n) r.update(i,a[i]);
+
+  rep(i,q){
+    if(com[i] == 2) r.update(x[i]-1,y[i]);
+    else{
+      int res = r.query(x[i]-1,y[i],0,0,r.n);
+      cout << res << "\n";
     }
   }
   
-  
-};
-int main()
-{
-  int n,q;cin >> n >> q;
-  vector<int> c(q);
-  vector<ll> x(q),y(q);
-  rep(i,q) cin >> c[i] >> x[i] >> y[i];
-  auto f = [&](int a,int b){ return max(a,b);};//二項演算 max
-  ll id = -1e+9;// 単位元 -inf
-  SegTree<decltype(f),ll> seg(f,id);
-  seg.init(n);
-  rep(i,q){
-    if(c[i]==0) seg.update(x[i],y[i]);
-    else cout << seg.query(x[i],y[i]+1,0,0,seg.size) << "\n";
-  }
   return 0;
 }

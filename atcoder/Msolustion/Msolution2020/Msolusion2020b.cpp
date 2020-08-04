@@ -19,7 +19,16 @@ using ll = long long;
 using pi = pair<int,int>;
 int main()
 {
-  int r; cin >> r;
-  cout << r*r << "\n";
+  int a,b,c; cin >> a >> b >> c;
+  int k; cin >> k;
+  while(k-- > 0) {
+    if(a >= b) b *= 2;
+    else if(b >= c) c *= 2;
+    else break;
+  }
+
+  if(a < b && b < c) cout << "Yes" << "\n";
+  else cout << "No" << "\n";
+  
   return 0;
 }

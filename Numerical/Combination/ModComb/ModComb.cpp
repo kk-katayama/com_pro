@@ -54,6 +54,7 @@ struct mint{
   }
 };
 
+
 const int NMAX=100010; // we can calculate nCk until n is equal to NMAX
 mint fact[NMAX],infac[NMAX];
 void Make_Fact(){
