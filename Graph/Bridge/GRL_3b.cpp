@@ -96,9 +96,8 @@ public:
 		   if(w == p) continue;
 		   if(pre[w] == -1) {
 		     low[v] = min(low[v], self(self, w, v));
-		     if(pre[w] == low[w]) {
-		       if(v < w) res.push_back({v, w});
-		       else res.push_back({w, v});
+		     if(pre[v] < low[w]) {
+		       res.push_back({ min(v,w), max(v,w) };
 		     }
 		   }
 		   else {
