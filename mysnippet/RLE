@@ -1,0 +1,26 @@
+# -*- mode: snippet -*-
+# name: RLE
+# key: RLE
+# --
+// ランレングス圧縮.配列の連続している要素をまとめてしまう圧縮.
+vector<pair<${1:ll},int>> rle(vector<$1> a){
+  vector<pair<$1,int>> res;
+  int n = a.size();
+  int cnt = 1;
+  pair<$1,int> p;
+  p.first = a[0];
+  rep(i,n-1){
+    if(a[i]==a[i+1]){
+      cnt++;
+    }
+    else{
+      p.second = cnt;
+      res.push_back(p);
+      cnt = 1;
+      p.first = a[i+1];
+    }
+  }
+  p.second = cnt;
+  res.push_back(p);
+  return res;
+}

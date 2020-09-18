@@ -1,0 +1,17 @@
+# -*- mode: snippet -*-
+# name: pascal_triangle
+# key: pascal
+# --
+vector<vector<ll>> comb;
+void pascal(int n)
+{
+  comb.resize(n+1);
+  rep(i,n+1) comb[i].assign(n+1,1);
+
+  for(int i=2;i<=n;++i){
+    for(int j=1;j<i;++j){
+      comb[i][j] = comb[i-1][j-1] + comb[i-1][j];
+    }
+ }
+}
+		  

@@ -6,6 +6,7 @@
 using namespace std;
 template<class T>bool chmax(T &a, const T &b) { if(a < b){ a = b; return 1; } return 0; }
 template<class T>bool chmin(T &a, const T &b) { if(a > b){ a = b; return 1; } return 0; }
+// 座圧.配列aを入れると、0-indexedで座圧した配列を返す.同じ要素は同じ数に圧縮される.
 vector<int> compress(vector<int> a) {
   int n = a.size();
   vector<int> vals;
@@ -17,6 +18,7 @@ vector<int> compress(vector<int> a) {
   vector<int> res;
   rep(i,n) {
     int id = lower_bound(vals.begin(), vals.end(), a[i]) - vals.begin();
+    // id + 1にすれば1-indexedになる
     res.push_back(id);
   }
 

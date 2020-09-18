@@ -39,6 +39,7 @@ public:
 	for(auto w: edge[v]) {
 	  if(d[w.first] > d[v] + w.second) {
 	    d[w.first] = d[v] + w.second;
+	    
 	    if(i == n - 1) {
 	      flag = false;
 	    }

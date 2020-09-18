@@ -4,6 +4,8 @@
 #define rep(i,n) for(int i=0;i<n;++i)
 #define rep1(i,n) for(int i=1;i<=n;++i)
 using namespace std;
+
+// 行列の構造体
 template<typename X>
 struct Matrix
 {
@@ -77,10 +79,9 @@ struct Matrix
       cout  << "\n";
     }
   }
-  
-  
-  
 };
+
+
 int main()
 {
   vector<vector<int>> a{ {1,2,3} , {4,5,6} };

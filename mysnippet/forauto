@@ -1,0 +1,7 @@
+# -*- mode: snippet -*-
+# contributor: York Zhao <gtdplatform@gmail.com>
+# name: forauto
+# key: forauto
+# --
+for(auto ${1:val}: $2) {
+}

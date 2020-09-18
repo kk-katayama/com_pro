@@ -18,9 +18,6 @@ struct Edge{
 template <typename X>
 struct Node{
   int idx;
-  int par; // parent of this node
-  X depth; // distance from root node to this node
-  int size; // size of partial tree 
   vector<Edge<X>> edge;
   
   Node() = default;
@@ -42,6 +39,10 @@ private:
   }
   
 public:
+  vector<int> par; // par[v] := 頂点vの親
+  vector<X> depth; // depth[v] := 根から見たときの頂点vの深さ
+  vector<int> size; // size[v] := 頂点vを根とする部分木の大きさ
+  
   Tree() = default;
 
   explicit Tree(int n) : n(n) {
@@ -70,16 +71,16 @@ public:
   }
 
   int DFS_Init(int v, int p, int d) {
-    node[v].par = p;
-    node[v].depth = d;
-    int size = 1;
+    par[v] = p;
+    depth[v] = d;
+    int siz = 1;
     for(auto next: node[v].edge) {
       int w = next.to;
       X cost = next.cost;
       if(w == p) continue;
-      size += DFS_Init(w, v, d + cost);
+      siz += DFS_Init(w, v, d + cost);
     }
-    return node[v].size = size;
+    return size[v] = siz;
   }
 
   // make rooted tree
@@ -88,7 +89,7 @@ public:
   }
 
   void Show() {
-    cout << i << ":" << node[i].size << "\n";
+    cout << i << ":" << size[i] << "\n";
   }
   
 };

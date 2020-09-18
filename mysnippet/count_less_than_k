@@ -1,0 +1,13 @@
+# -*- mode: snippet -*-
+# name: count_less_than_k
+# key: cntltk
+# --
+// ソート済みの配列aの要素で、k以下のものの個数を求める
+auto cntltk = [&a,&n](${1:int} k) ->int{
+		int lb = -1, ub = n;
+		while(ub - lb > 1) {
+		  int mid = (lb + ub) / 2;
+		  (a[mid] <= k ? lb : ub) = mid;
+		}
+		return lb + 1;
+	      };

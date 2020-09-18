@@ -1,0 +1,23 @@
+# -*- mode: snippet -*-
+# name: compress
+# key: compress
+# --
+// 座圧.配列aを入れると、0-indexedで座圧した配列を返す.同じ要素は同じ数に圧縮される.
+vector<int> compress(vector<${1:ll}> a) {
+  int n = a.size();
+  vector<$1> vals;
+  rep(i,n) vals.push_back(a[i]);
+
+  sort(vals.begin(), vals.end());
+  vals.erase(unique(vals.begin(), vals.end()), vals.end());
+
+  vector<int> res;
+  rep(i,n) {
+    int id = lower_bound(vals.begin(), vals.end(), a[i]) - vals.begin();
+   // id + 1にすれば1-indexedになる
+   res.push_back(id);
+  }
+
+  return res;
+}
+

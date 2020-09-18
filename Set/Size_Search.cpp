@@ -13,7 +13,7 @@ int main()
   int comb=(1<<k)-1;//辞書順最小
   while(comb<(1<<n)){//n個の要素から選ぶのでcomb>=(1<<n)となってはいけない
     rep(i,n){
-      //      if((1<<i)&comb) cout << i << " ";
+      if((1<<i)&comb) cout << i << " ";
     }
     cout << "\n";
     int x=comb&-comb;//最下位の1bitを独立させたもの
@@ -23,6 +23,5 @@ int main()
     //z/xでzの最下位の1の連続した部分より下位にある0を消し、右に1ビットシフトする。
     //それとyのorをとれば求めたい次のビット列が得られる。
   }
-
   return 0;
 }

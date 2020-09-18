@@ -1,0 +1,11 @@
+# -*- mode: snippet -*-
+# name: input_vector2
+# key: invec2
+# --
+vector<vector<${4:int}>> ${1:a}(${2:n}, vector<$4>(${3:m}));
+rep(i,$2) {
+  rep(j,$3) {	 
+    scanf("%${5:d}", &$1[i][j]);
+  }
+}
+$0

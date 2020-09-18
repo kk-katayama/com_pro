@@ -3,19 +3,20 @@ class DST
 {
 private:
   int n;
-  vector<X> dat,delay;
-  const X init = 0;
+  vector<X> dat,delay,delay2,delay3;
+  const X init = 1e+9;
 
   void eval(int k,int l,int r)
   {
     if(delay[k] != 0){
-      //      dat[k] += delay[k];
-      dat[k] = delay[k];      
+      dat[k] = delay2[k];
+      dat[k] += delay[k];
+      dat[k] += delay3[k];      
       if(k < n-1){
 	delay[2*k+1] += delay[k]/2;
 	delay[2*k+2] += delay[k]/2;
-	// delay[2*k+1] = delay[k]; // change update
-	// delay[2*k+2] = delay[k];	
+	delay2[2*k+1] = delay2[k]; // change update
+	delay2[2*k+2] = delay2[k];	
       }
       delay[k] = 0;
     }
@@ -30,6 +31,8 @@ public:
     while(n < _n) n *= 2;
     dat.assign(2*n-1,init);
     delay.assign(2*n-1,init);
+    delay2.assign(2*n-1,init);
+    delay3.assign(2*n-1,init);    
   }
 
   void update(int a,int b,X x,int k,int l,int r)
@@ -40,7 +43,7 @@ public:
     
     if(a<=l&&r<=b){
       delay[k] += (r-l)*x;
-      //      delay[k] = x; // change update
+      delay2[k] = x; // change update
       eval(k,l,r);
     }
     else{
@@ -56,13 +59,13 @@ public:
   {
     eval(k,l,r);
     
-    if(r<=a||b<=l) return 0;
+    if(r<=a||b<=l) return init;
 
     if(a<=l&&r<=b) return dat[k];    
     else{
       X vl = query(a,b,2*k+1,l,(l+r)/2);
       X vr = query(a,b,2*k+2,(l+r)/2,r);
-      return vl + vr;
+      return min(vl,vr);
     }
   }
 

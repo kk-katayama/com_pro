@@ -1,0 +1,15 @@
+# -*- mode: snippet -*-
+# name: binary search less than k
+# key: ltk
+# --
+// 二分探索. 配列aの要素で、値がk以下であるもののうち最大のindexを返す.
+auto lower = [&a](int k)-> int{
+	      int lb = -1, ub = a.size();
+	      while(ub - lb > 1) {
+		int mid = (ub + lb) / 2;
+		(a[mid] <= k ? lb : ub) = mid;
+	      }
+	      return lb;
+	    };
+
+		    

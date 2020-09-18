@@ -1,4 +1,4 @@
-//return x's divisor as vector
+// xの約数を列挙する.返り値はvector.O(sqrt(x))
 vector<int> divisor(int x){
   vector<int> res;
   for(int i=1;i*i<=x;++i){

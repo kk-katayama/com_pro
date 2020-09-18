@@ -1,43 +1,86 @@
-#include <iostream>
-#include <algorithm>
-#include <vector>
-#include <utility>
-#define rep(i,n) for(int i=0;i<n;++i)
-#define rep1(i,n) for(int i=1;i<=n;++i)
-using namespace std;
-template<typename X>
+//****************************************
+// Graph template
+//****************************************
+
+// status of edge
+template <typename X>
+struct Edge{
+  int from;
+  int to;
+  X cost;
+
+  Edge() = default;
+
+  Edge(int from, int to, X cost) : from(from), to(to), cost(cost) {}
+};
+
+// status of node
+template <typename X>
+struct Node{ 
+  int idx;
+  vector<Edge<X>> edge;
+  
+  Node() = default;
+
+  explicit Node(int idx) : idx(idx) {}
+};
+
+template <typename X>
 class Graph{
 private:
-  int n;// 頂点数
-  int m;// 辺の数
-  vector<vector<pair<int,X>>> edge;// コスト付きの辺
-  vector<X> d; 
-public:
-  // 頂点数_nのグラフを作成
-  Graph(int _n){ n = _n; edge.resize(n);  }
+  int n; // number of node
+  int m; // number of edge
+  vector<Node<X>> node; 
 
-  // 辺コストありのグラフ作成、_n頂点、_m辺、a[i]->b[i]のコストc[i]の辺がある。
-  Graph(int _n,int _m,vector<int> a,vector<int> b,vector<X> c){
-    n = _n;m = _m;edge.resize(n);
-    rep(i,m){
-      edge[a[i]].push_back({b[i],c[i]});
-      edge[b[i]].push_back({a[i],c[i]}); //無向グラフ
+  void Init_Node() {
+    rep(i,n) node.emplace_back(i);
+  }
+public:
+  vector<X> d;
+  const X inf = 1e+15;
+  vector<int> prev;
+  
+  explicit Graph(int n) : n(n) {
+    Init_Node();
+  }
+
+  // edges have no-weight 
+  Graph(int n, int m, vector<int> from, vector<int> to) : n(n), m(m) {
+    Init_Node();
+    rep(i,m) {
+      add_edge(from[i], to[i]);
+      add_edge(to[i], from[i]);      
     }
   }  
 
-  void add_edge(int from,int to,X cost){ edge[from].push_back({to,cost});}
+  // edges have weight
+  Graph(int n, int m, vector<int> from, vector<int> to, vector<X> cost) : n(n), m(m) {
+    Init_Node();
+    rep(i,m) {
+      add_edge(from[i], to[i], cost[i]);
+      add_edge(to[i], from[i], cost[i]);      
+    }
+  }
+
+  void add_edge(int from, int to, X cost = 1) {
+    node[from].edge.emplace_back(from, to, cost);
+  }
 
   //ベルマンフォード法。頂点sから全頂点への最短距離。負閉路を見つけるとfalseを返す。
   bool bellmanford(int s){
     d.assign(n,inf);
     d[s] = 0;
+    prev.assign(n,-1);
     bool flag = true;
     rep(i,n){
       rep(v,n){
 	if(d[v]==inf) continue;
-	for(auto w:edge[v]){
-	  if(d[w.first]>d[v] + w.second){
-	    d[w.first] = d[v] + w.second;
+	for(auto next: node[v].edge){
+	  int w = next.to;
+	  X cos = next.cost;
+	  if(d[w]>d[v] + cos){
+	    d[w] = d[v] + cos;
+	    prev[w] = v;
 	    if(i==n-1){
 	      flag = false;
 	    }
@@ -49,13 +92,17 @@ public:
   }
   
 
+  // s->t の最短経路復元
+  vector<int> getpath(int t) {
+    vector<int> res;
+    for(; t != -1; t = prev[t]) {
+      res.push_back(t);
+    }
+    reverse(res.begin(), res.end());
+    return res;
+  }
+
   
 };
 
-
-int main()
-{
-
-  return 0;
-}
 

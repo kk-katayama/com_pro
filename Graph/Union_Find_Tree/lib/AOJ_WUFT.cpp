@@ -36,6 +36,7 @@ struct WUFT{
     return diff_weight[x];
   }
 
+  // xとyの距離を返す
   X diff(int x,int y){
     return weight(y) - weight(x);
   }

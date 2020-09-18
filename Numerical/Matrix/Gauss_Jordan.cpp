@@ -81,9 +81,8 @@ struct Matrix
       cout  << "\n";
     }
   }
-  
-  
 };
+
 const double EPS = 1e-8;
 template<class X> int GaussJordan(Matrix<X> &A,bool flag=false){
   int m = A.size(),n = A[0].size(); // m row and n col
@@ -126,7 +125,7 @@ template<class X> int GaussJordan(Matrix<X> &A,bool flag=false){
   }
   return rank;
 }
-
+// 正則行列Aに対して、連立方程式Ax = b の解を求める
 template<class X> vector<X> linear_eq(Matrix<X> A,vector<X> b){
   // extend
   int m = A.size(),n = A[0].size();

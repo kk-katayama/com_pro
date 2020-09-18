@@ -1,0 +1,18 @@
+# -*- mode: snippet -*-
+# name: primefactor
+# key: primefactor
+# --
+// n を素因数分解する.返り値はmap.計算量はO(sqrt(n))
+map<${1:ll},int> primefactor($1 n){
+  $1 nn = n;
+  map<$1,int> res;
+  for($1 i=2;i*i<=nn;++i){
+    while(nn%i==0){
+      res[i]++;
+      nn /= i;
+    }
+  }
+  if(nn!=1) res[nn] = 1;
+  return res;
+}
+

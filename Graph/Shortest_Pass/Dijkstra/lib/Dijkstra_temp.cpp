@@ -1,4 +1,4 @@
-//***********************************************************
+cd//***********************************************************
 // Dijkstra. You should include queue lib.
 //***********************************************************
 
@@ -61,7 +61,7 @@ private:
   int n; // number of node
   int m; // number of edge
   vector<Node<X>> node; // node list
-
+  
   const X inf = 1e+9; // initial value of dist
 
   void Init_Node() {
