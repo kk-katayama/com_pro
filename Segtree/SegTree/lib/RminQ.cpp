@@ -43,6 +43,15 @@ struct SegTree{
     }
   }
 
+  void add(int k,T a){
+    k += size - 1;
+    dat[k] += a;
+    while(k > 0){
+      k = (k-1)/2;
+      dat[k] = merge(dat[2*k+1],dat[2*k+2]);
+    }
+  }  
+
   // return query for [a,b). (k,l,r) = (0,0,seg.size)
   T query(int a,int b,int k,int l,int r){
     // out of range
