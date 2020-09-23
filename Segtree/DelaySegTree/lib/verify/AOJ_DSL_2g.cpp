@@ -1,21 +1,42 @@
+#include <iostream>
+#include <algorithm>
+#include <vector>
+#include <string>
+#include <utility>
+#include <set>
+#include <map>
+#include <cmath>
+#include <queue>
+#include <cstdio>
+#include <limits>
+#define rep(i,n) for(int i = 0; i < n; ++i)
+#define rep1(i,n) for(int i = 1; i <= n; ++i)
+using namespace std;
+template<class T>bool chmax(T &a, const T &b) { if(a < b){ a = b; return 1; } return 0; }
+template<class T>bool chmin(T &a, const T &b) { if(a > b){ a = b; return 1; } return 0; }
+using ll = long long; using ld = long double;
+using pi = pair<int,int>; using pl = pair<ll,ll>;
+using vi = vector<int>; using vii = vector<vi>;
+using vl = vector<ll>; using vll = vector<vl>;
+const int inf = numeric_limits<int>::max();
+const ll infll = numeric_limits<ll>::max();
 //--------------------------------------
 // 抽象化遅延セグ木
 // 要素のマージ関数f, 作用素のマージ関数h, 要素に作用素を作用させる関数g, 作用素に区間の長さを作用させる関数p, 要素の初期値id1, 作用素の初期値id2を代入して宣言
 //****例******
-//  区間更新, 区間最小
 //  auto f = [&](ll a, ll b){ return min(a, b); };
 //  auto h = [&](ll a, ll b){ return b; };
 //  auto g = [&](ll a, ll b){ return b; };
 //  auto p = [&](ll a, int b){ return a; };  
 //  ll id1 = (1LL << 31) - 1;
 //  ll id2 = (1LL << 31) - 1;
-//  LST<decltype(f), decltype(h), decltype(g), decltype(p), ll, ll> lst(f, h, g, p, id1, id2);
+//  DST<decltype(f), decltype(h), decltype(g), decltype(p), ll, ll> dst(f, h, g, p, id1, id2);
 //*********************
 //-------------------------------------------------------------------------
 
 
 template <typename F, typename H, typename G, typename P, typename T, typename E>
-struct LST{
+struct DST{
   F f; // 要素のマージ関数
   H h; // 作用素のマージ関数
   G g; // 要素に作用素を作用させる関数
@@ -24,16 +45,16 @@ struct LST{
   E id2; // 作用素の初期値
   int size;
   vector<T> dat;
-  vector<E> lazy;
+  vector<E> delay;
   
-  LST(F f, H h, G g, P p, T id1, E id2)
+  DST(F f, H h, G g, P p, T id1, E id2)
     :f(f), h(h), g(g), id1(id1), id2(id2), p(p){}
 
   void init(int n){
     size = 1;
     while(size<=n) size *= 2;
     dat.resize(size*2-1, id1);
-    lazy.resize(size*2-1, id2);    
+    delay.resize(size*2-1, id2);    
   }
 
   void build(vector<T> vec){
@@ -48,13 +69,13 @@ struct LST{
 
   // 遅延評価
   void eval(int k,int l,int r){
-    if(lazy[k] != id2){
+    if(delay[k] != id2){
       if(k<size-1){
-	lazy[2*k+1] = h(lazy[2*k+1], lazy[k]);
-	lazy[2*k+2] = h(lazy[2*k+2], lazy[k]);
+	delay[2*k+1] = h(delay[2*k+1], delay[k]);
+	delay[2*k+2] = h(delay[2*k+2], delay[k]);
       }
-      dat[k] = g(dat[k], p(lazy[k], r-l));
-      lazy[k] = id2;
+      dat[k] = g(dat[k], p(delay[k], r-l));
+      delay[k] = id2;
     }
   }
 
@@ -63,7 +84,7 @@ struct LST{
     eval(k,l,r);
     if(r<=a||b<=l) return ;
     if(a<=l&&r<=b){
-      lazy[k] = h(lazy[k], x);
+      delay[k] = h(delay[k], x);
       eval(k,l,r);
     }
     else{
@@ -113,7 +134,7 @@ struct LST{
     num = 1;
     while(index<size){
       rep(i,num){
-	cout << lazy[i+index] << " ";
+	cout << delay[i+index] << " ";
       }
       cout << "\n";
       num *= 2;
@@ -124,3 +145,31 @@ struct LST{
 
   
 };
+
+int main()
+{
+  int n,q; cin >> n >> q;
+  auto f = [&](ll a, ll b){ return a+b; };
+  auto h = [&](ll a, ll b){ return a+b; };
+  auto g = [&](ll a, ll b){ return a+b; };
+  auto p = [&](ll a, int b){ return a*b; };  
+  ll id1 = 0;
+  ll id2 = 0;
+  DST<decltype(f), decltype(h), decltype(g), decltype(p), ll, ll> dst(f, h, g, p, id1, id2);
+
+  dst.init(n);
+  while(q-- > 0) {
+    int t; cin >> t;
+    if(t == 0) {
+      int l,r,x; cin >> l >> r >> x;
+      dst.update(l, r+1, x);
+    }
+    else {
+      int l,r; cin >> l >> r;
+      cout << dst.query(l, r+1) << "\n";
+    }
+  }
+
+  
+  return 0;
+}
