@@ -1,6 +1,6 @@
 # セグメントツリー  
 
-beetさんの抽象化セグ木を参考に作成されています。
+beetさんの抽象化セグ木を参考に作成されておる。
 
 ## ライブラリ  
 [segtree](https://github.com/kk-katayama/com_pro/blob/master/Segtree/SegTree/lib/SegTree.cpp)  
