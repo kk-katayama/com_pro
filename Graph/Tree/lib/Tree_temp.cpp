@@ -30,18 +30,21 @@ struct Node{
 // tree
 template <typename X>
 class Tree{
-private:
+public:
   int n; // number of node
   vector<Node<X>> node;
+  vector<int> par; // par[v] := 頂点vの親
+  vector<int> depth; // depth[v] := 根から見たときの頂点vの深さ
+  vector<X> dist; // dist[v] := 根から頂点vへの距離  
+  vector<int> size; // size[v] := 頂点vを根とする部分木の大きさ
 
   void Init_Node() {
-    rep(i,n) node.emplace_back(i);    
+    rep(i,n) node.emplace_back(i);
+    par.resize(n);
+    depth.resize(n);
+    dist.resize(n);    
+    size.resize(n);    
   }
-  
-public:
-  vector<int> par; // par[v] := 頂点vの親
-  vector<X> depth; // depth[v] := 根から見たときの頂点vの深さ
-  vector<int> size; // size[v] := 頂点vを根とする部分木の大きさ
   
   Tree() = default;
 
@@ -70,26 +73,39 @@ public:
     node[from].edge.emplace_back(from, to, cost);
   }
 
-  int DFS_Init(int v, int p, int d) {
+  int DFS_Init(int v, int p, int dep, int dis) {
     par[v] = p;
-    depth[v] = d;
+    depth[v] = dep;
+    dist[v] = dis;
     int siz = 1;
     for(auto next: node[v].edge) {
       int w = next.to;
       X cost = next.cost;
       if(w == p) continue;
-      siz += DFS_Init(w, v, d + cost);
+      siz += DFS_Init(w, v, dep + 1, dis + cost);
     }
     return size[v] = siz;
   }
 
   // make rooted tree
   void Make_root(int root) {
-    DFS_Init(root, -1, 0);
+    DFS_Init(root, -1, 0, 0);
   }
 
-  void Show() {
-    cout << i << ":" << size[i] << "\n";
+  X Diameter() {
+    int far;
+    X mx = -1;
+    Make_root(0);
+    rep(i,n) {
+      if( chmax(mx, dist[i]) ) {
+	far = i;
+      }
+    }
+    X res = 0;
+    Make_root(far);
+    rep(i,n) {
+      chmax(res, dist[i]);
+    }
+    return res;
   }
-  
 };
