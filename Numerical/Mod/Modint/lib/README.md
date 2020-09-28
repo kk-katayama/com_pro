@@ -5,6 +5,11 @@
 ## ライブラリ  
 [Modint](https://github.com/kk-katayama/com_pro/blob/master/Numerical/Mod/lib/Modint.cpp)  
 
+## テンプレート引数  
+modint<MOD> x の形で宣言。好きなMODをMODにいれてね。  
+
+なお、デフォルトでusing mint = modint<1000000007> としてある。
+
 ## 関数  
 ### pow(int t)  
 繰り返し二乗法でmodpowを求める。　　
