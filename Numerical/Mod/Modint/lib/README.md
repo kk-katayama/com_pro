@@ -3,7 +3,7 @@
 一番使うライブラリと言っても過言ではない。mod M上での四則演算を定義した構造体。いつかのABC解説放送で見た実装を参考にしている。<<とかはオーバーロードしてないので標準出力の際は気をつけて。  
 
 ## ライブラリ  
-[Modint](https://github.com/kk-katayama/com_pro/blob/master/Numerical/Mod/lib/Modint.cpp)  
+[Modint](https://github.com/kk-katayama/com_pro/blob/master/Numerical/Mod/Modint/lib/Modint.cpp)  
 
 ## テンプレート引数  
 modint<MOD> x の形で宣言。好きなMODをMODにいれてね。  
