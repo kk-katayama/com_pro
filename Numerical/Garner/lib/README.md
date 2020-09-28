@@ -4,7 +4,7 @@ Garnerさんのアルゴリズム。中国剰余定理の拡張版で、
 
 x = r1 (mod m1)  
 x = r2 (mod m2)  
-  :
+&ensp; :  
 x = rn (mod mn)  
 
 を満たす最小のxを返す。  
