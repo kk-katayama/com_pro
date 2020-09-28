@@ -6,7 +6,7 @@
 [Modint](https://github.com/kk-katayama/com_pro/blob/master/Numerical/Mod/Modint/lib/Modint.cpp)  
 
 ## テンプレート引数  
-modint<MOD> x の形で宣言。好きなMODをMODにいれてね。  
+modint\<MOD\> x の形で宣言。好きなMODをMODにいれてね。  
 
 なお、デフォルトでusing mint = modint<1000000007> としてある。
 
