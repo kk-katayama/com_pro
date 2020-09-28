@@ -47,17 +47,21 @@ ll ModInv(ll a, ll mod) {
   return x;
 }
 
-ll Gernar(vector<ll> r, vector<ll> m, ll mod) {
+ll Garner(vector<ll> r, vector<ll> m, ll mod = 100000000000000003) {
+  r.push_back(0);
+  m.push_back(mod);
   int n = r.size();
-  ll mprod = 1; // mprodにはm[i]の積を入れていく
-  ll x = r[0]%m[0];
-  rep1(i,n-1) {
-    mprod *= m[i-1];
-    ll t = ((r[i] - x) * ModInv(mprod, m[i])) % m[i];
+  vector<ll> mprod(n, 1); // mprodにはm[i]の積を入れていく
+  vector<ll> x(n, 0); // xは答え
+  rep(i,n-1) {
+    ll t = ((r[i] - x[i]) * ModInv(mprod[i], m[i])) % m[i];
     if(t < 0) t += m[i];
-    x += t * mprod;
+    for (int j = i + 1; j < n; j++) {
+      (x[j] += mprod[j] * t) %= m[j];
+      (mprod[j] *= m[i]) %= m[j];
+    }
   }
-  return x;
+  return x[n-1];
 }
 
 int main()
@@ -73,7 +77,7 @@ int main()
     }
   }
 
-  ll res = Gernar(r,m,0);
+  ll res = Garner(r,m);
 
   auto digitsum = [](ll a, ll b) ->ll{
 		    ll ans = 0;

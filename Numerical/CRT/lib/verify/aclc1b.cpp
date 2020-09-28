@@ -23,12 +23,12 @@ const ll infll = numeric_limits<ll>::max();
 // 拡張ユークリッドの互除法
 // ap + bq = gcd(a, b) となる (p, q) を求める.
 // 返り値はgcd(a, b)
-ll extgcd(ll a, ll b, ll &p, ll &q) {  
+ll ExtGcd(ll a, ll b, ll &p, ll &q) {  
   if (b == 0) {
     p = 1; q = 0;
     return a;
   }  
-  ll d = extgcd(b, a%b, q, p);  
+  ll d = ExtGcd(b, a%b, q, p);  
   q -= a/b * p;  
   return d;  
 }
@@ -39,7 +39,7 @@ ll extgcd(ll a, ll b, ll &p, ll &q) {
 // 解なしの場合は (0, -1) を返すよ
 pair<ll, ll> CRT(ll b1, ll m1, ll b2, ll m2) {
   ll p, q;
-  ll d = extgcd(m1, m2, p, q); // p is inv of m1/d (mod. m2/d)
+  ll d = ExtGcd(m1, m2, p, q); // p is inv of m1/d (mod. m2/d)
   if ((b2 - b1) % d != 0) return {0, -1};
   ll m = m1 * (m2/d); // lcm of (m1, m2)
   ll tmp = (b2 - b1) / d * p % (m2/d);
@@ -63,8 +63,28 @@ map<ll,int> primefactor(ll n){
 
 int main()
 {
-  int a,b; cin >> a >> b;
-  int c,d; cin >> c >> d;
-  cout << CRT(a,b,c,d).first << "\n";
+  ll n; cin >> n;
+  n *= 2;
+  map<ll,int> pf = primefactor(n);
+  vl a;
+  for(auto val: pf) {
+    auto [fi, se] = val;
+    a.push_back(pow(fi, se));
+  }
+  ll res = infll;
+  int m = a.size();
+  rep(S, (1 << m) ) {
+    ll tmp = 1;
+    rep(i,m) {
+      if((S >> i) & 1) {
+	tmp *= a[i];
+      }
+    }
+    pair<ll,ll> crt = CRT(0, tmp, -1, n/tmp);
+    if(crt.first != 0) {
+      chmin(res, crt.first);
+    }
+  }
+  cout << res << "\n";
   return 0;
 }
