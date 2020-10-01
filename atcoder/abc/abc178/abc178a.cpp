@@ -22,6 +22,7 @@ const int inf = numeric_limits<int>::max();
 const ll infll = numeric_limits<ll>::max();
 int main()
 {
-  
+  int n; cin >> n;
+  cout << (n == 1 ? 0 : 1) << "\n";
   return 0;
 }

@@ -59,5 +59,10 @@ int main()
   cin >> h >> w;
   vector<vector<char>> c(h,vector<char>(w));
   rep(i,h) rep(j,w) cin >> c[i][j];
+
+  // ラムダ式Grid-BFS
+
+  auto bfs = [&](
+  
   return 0;
 }

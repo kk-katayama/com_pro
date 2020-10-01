@@ -22,6 +22,7 @@ const int inf = numeric_limits<int>::max();
 const ll infll = numeric_limits<ll>::max();
 int main()
 {
-  
+  ll a,b,c,d; cin >> a >> b >> c >> d;
+  cout << max({a*c, a*d, b*c, b*d}) << "\n";
   return 0;
 }

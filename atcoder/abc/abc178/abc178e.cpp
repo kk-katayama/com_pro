@@ -22,6 +22,25 @@ const int inf = numeric_limits<int>::max();
 const ll infll = numeric_limits<ll>::max();
 int main()
 {
+  int n; cin >> n;
+  vi x(n),y(n);
+  rep(i,n) cin >> x[i] >> y[i];
+
+  vi xx(n),yy(n);
+  rep(i,n) {
+    xx[i] = x[i] + y[i];
+    yy[i] = x[i] - y[i];
+  }
+
+  int xmax = -inf, ymax = -inf, xmin = inf, ymin = inf;
+  rep(i,n) {
+    chmax(xmax, xx[i]);
+    chmax(ymax, yy[i]);
+    chmin(xmin, xx[i]);
+    chmin(ymin, yy[i]);
+  }
+  
+  cout << max(xmax - xmin, ymax - ymin) << "\n";
   
   return 0;
 }

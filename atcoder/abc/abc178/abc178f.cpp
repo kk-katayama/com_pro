@@ -22,6 +22,43 @@ const int inf = numeric_limits<int>::max();
 const ll infll = numeric_limits<ll>::max();
 int main()
 {
-  
+  int n; cin >> n;
+  vi a(n),b(n);
+  rep(i,n) cin >> a[i];
+  rep(i,n) cin >> b[i];
+
+  int m = 0;
+  rep1(i,n) {
+    int lb = -1, ub = a.size();
+    while(ub - lb > 1) {
+      int mid = (ub + lb) / 2;
+      (a[mid] <= i ? lb : ub) = mid;
+    }
+    int amax = lb;
+    lb = -1; ub = b.size();
+    while(ub - lb > 1) {
+      int mid = (ub + lb) / 2;
+      (b[mid] >= i ? ub : lb) = mid;
+    }
+    int bmin = ub;
+    chmax(m, amax - bmin + 1);
+  }
+
+  vi c(n);
+  rep(i,n) {
+    c[i] = b[(i+m)%n];
+  }
+
+  bool f = false;
+  rep(i,n) {
+    if(a[i] == c[i]) f = true;
+  }
+
+  if(f) cout << "No" << "\n";
+  else {
+    cout << "Yes" << "\n";
+    rep(i,n) cout << c[i] << " ";
+    cout << "\n";
+  }
   return 0;
 }

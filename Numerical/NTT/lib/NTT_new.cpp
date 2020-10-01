@@ -183,9 +183,12 @@ vector<ll> naive_convolve(vector<ll> a,vector<ll> b){
 
 // 任意mod での畳み込み
 vector<ll> convolve(vector<ll> a, vector<ll> b, ll mod) {
-  using mint1 = modint<167772161>;
-  using mint2 = modint<469762049>;
-  using mint3 = modint<1224736769>;
+  // using mint1 = modint<167772161>;
+  // using mint2 = modint<469762049>;
+  // using mint3 = modint<1224736769>;
+  using mint1 = modint<754974721>;  
+  using mint2 = modint<167772161>;
+  using mint3 = modint<469762049>;
   int n = a.size();
   int m = b.size();
   

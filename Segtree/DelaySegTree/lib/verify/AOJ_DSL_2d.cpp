@@ -138,7 +138,7 @@ int main()
 {
   int n,q; cin >> n >> q;
 
-  auto f = [&](ll a, ll b){ return min(a, b); };
+  auto f = [&](ll a, ll b){ return min(a,b); };
   auto h = [&](ll a, ll b){ return b; };
   auto g = [&](ll a, ll b){ return b; };
   auto p = [&](ll a, int b){ return a; };  
