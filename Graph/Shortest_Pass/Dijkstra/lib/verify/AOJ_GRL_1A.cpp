@@ -11,72 +11,69 @@ template<class T>bool chmin(T &a, const T &b) { if(a > b){ a = b; return 1; } re
 // Dijkstra. You should include queue lib.
 //***********************************************************
 
-// status of edge
-template <typename X>
-struct Edge{ 
-  int from; 
-  int to;
-  X cost;
-
-  Edge() = default;
-
-  Edge(int from, int to, X cost) : from(from), to(to), cost(cost) {}
-};
-
-// status of node
-template <typename X>
-struct Node{ 
-  int idx; // index of node
-  X dist; // distance from start node
-  vector<Edge<X>> edge;
-  
-  Node() = default;
-
-  explicit Node(int idx) : idx(idx) {}
-  
-};
-
-
-template <typename X = int>
-struct Status{ // entered priority_queue
-  int idx;
-  X dist;
-
-  Status() = default;
-
-  Status(int idx, X dist) : idx(idx), dist(dist) {}
-
-  bool operator == (const Status& r) const {
-    return (idx == r.idx && dist == r.dist);
-  }
-
-  bool operator != (const Status& r) const {
-    return !(*this == r);
-  }
-
-  bool operator < (const Status& r) const {
-    return dist > r.dist;
-  }
-
-  bool operator > (const Status& r) const {
-    return dist < r.dist;
-  }
-
-};
-
 template <typename X>
 class Graph{
-private:
+public:  
+  // status of edge
+  struct Edge{ 
+    int from; 
+    int to;
+    X cost;
+
+    Edge() = default;
+
+    Edge(int from, int to, X cost) : from(from), to(to), cost(cost) {}
+  };
+
+  // status of node
+  struct Node{ 
+    int idx; // index of node
+    X dist; // distance from start node
+    vector<Edge> edge;
+  
+    Node() = default;
+
+    explicit Node(int idx) : idx(idx) {}
+  
+  };
+
+
+  struct Status{ // entered priority_queue
+    int idx;
+    X dist;
+
+    Status() = default;
+
+    Status(int idx, X dist) : idx(idx), dist(dist) {}
+
+    bool operator == (const Status& r) const {
+      return (idx == r.idx && dist == r.dist);
+    }
+
+    bool operator != (const Status& r) const {
+      return !(*this == r);
+    }
+
+    bool operator < (const Status& r) const {
+      return dist > r.dist;
+    }
+
+    bool operator > (const Status& r) const {
+      return dist < r.dist;
+    }
+
+  };
+
   int n; // number of node
   int m; // number of edge
-  vector<Node<X>> node; // node list
+  vector<Node> node; // node list
 
   const X inf = 1e+9; // initial value of dist
 
   void Init_Node() {
     rep(i,n) node.emplace_back(i);
   }  
-public:
+
   explicit Graph(int n) : n(n) {
     Init_Node();
   }
@@ -113,11 +110,11 @@ public:
     rep(i,n) node[i].dist = inf;
     node[s].dist = 0;
     
-    priority_queue<Status<X>> pq;
+    priority_queue<Status> pq;
     pq.emplace(s, 0); // pq have (node, shortest distance from start to the node)
 
     while( !pq.empty() ) {
-      Status<X> now = pq.top(); pq.pop();
+      Status now = pq.top(); pq.pop();
       int v = now.idx; // number of node
       X dis = now.dist; // distance of start from node "v"
       if(node[v].dist < dis) continue; 

@@ -1,20 +1,42 @@
 #include <iostream>
 #include <algorithm>
 #include <vector>
+#include <string>
+#include <utility>
+#include <set>
+#include <map>
 #include <cmath>
-#define rep(i,n) for(int i=0;i<n;++i)
-#define rep1(i,n) for(int i=1;i<=n;++i)
+#include <queue>
+#include <cstdio>
+#include <limits>
+#define rep(i,n) for(int i = 0; i < n; ++i)
+#define rep1(i,n) for(int i = 1; i <= n; ++i)
 using namespace std;
+template<class T>bool chmax(T &a, const T &b) { if(a < b){ a = b; return 1; } return 0; }
+template<class T>bool chmin(T &a, const T &b) { if(a > b){ a = b; return 1; } return 0; }
+template<class T> inline int  sz(T &a) { return a.size(); }
+using ll = long long; using ld = long double;
+using pi = pair<int,int>; using pl = pair<ll,ll>;
+using vi = vector<int>; using vvi = vector<vi>;
+using vl = vector<ll>; using vvl = vector<vl>;
+const int inf = numeric_limits<int>::max();
+const ll infll = numeric_limits<ll>::max();
 int main()
 {
-  int n;cin >> n;
-  vector<int> a(n);
-  rep(i,n) cin >> a[i];
-  vector<int> sum(n+1);
-  sum[0] = 0;
-  int res = 1e+9;
-  rep(i,n) sum[i+1] = sum[i]+a[i];
-  rep1(i,n-1) res = min(res,abs(sum[n]-sum[i]-sum[i]));
+  int n; cin >> n;
+  vi w(n);
+  rep(i,n) cin >> w[i];
+
+  int sum = 0;
+  rep(i,n) sum += w[i];
+
+  int buf = 0;
+  int res = inf;
+  rep(i,n) {
+    buf += w[i];
+    chmin(res, abs(buf - (sum - buf)));
+  }
   cout << res << "\n";
+  
   return 0;
 }

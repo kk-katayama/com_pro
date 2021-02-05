@@ -1,62 +1,67 @@
 #include <iostream>
 #include <algorithm>
 #include <vector>
-#define rep(i,n) for(int i=0;i<n;++i)
-#define rep1(i,n) for(int i=1;i<=n;++i)
+#include <string>
+#include <utility>
+#include <set>
+#include <map>
+#include <cmath>
+#include <queue>
+#include <cstdio>
+#include <limits>
+#define rep(i,n) for(int i = 0; i < n; ++i)
+#define rep1(i,n) for(int i = 1; i <= n; ++i)
 using namespace std;
-typedef long long ll;
+template<class T>bool chmax(T &a, const T &b) { if(a < b){ a = b; return 1; } return 0; }
+template<class T>bool chmin(T &a, const T &b) { if(a > b){ a = b; return 1; } return 0; }
+template<class T> inline int  sz(T &a) { return a.size(); }
+using ll = long long; using ld = long double;
+using pi = pair<int,int>; using pl = pair<ll,ll>;
+using vi = vector<int>; using vvi = vector<vi>;
+using vl = vector<ll>; using vvl = vector<vl>;
+const int inf = numeric_limits<int>::max();
+const ll infll = numeric_limits<ll>::max();
+// ユークリッドの互除法で最大公約数を求める
 ll gcd(ll a,ll b){
   if(b==0) return a;
   return gcd(b,a%b);
 }
+// 最小公倍数
 ll lcm(ll a,ll b){
-  return a*b/gcd(a,b);
+  return a/gcd(a,b)*b;
 }
 
 int main()
 {
-  ll n,m;
-  cin >> n >> m;
-  vector<ll> a(n);
-  rep(i,n){
-    cin >> a[i];
+  ll n,m; cin >> n >> m;
+  vi a(n);
+  rep(i,n) cin >> a[i];
+
+  ll t = -1;
+  rep(i,n) {
+    ll buf = a[i];
+    ll c = 0;
+    while(buf % 2 == 0) {
+      c++;
+      buf /= 2;
+    }
+    if(t > 0 && t != c) {
+      cout << 0 << "\n";
+      return 0;
+    }
+    t = c;
   }
 
-  bool f = true;
-
-  ll c = 0;
-  ll d = a[0];
-  while(d%2==0){
-    d /= 2;
-    c++;
+  ll g = 1;
+  rep(i,n) {
+    a[i] /= 2;
+    g = lcm(g, a[i]);
   }
-  rep1(i,n-1){
-    ll cnt = 0;
-    ll b = a[i];
-    while(b%2==0){
-      b /= 2;
-      cnt++;
-    }
-    if(c!=cnt){
-      f = false;
-      break;
-    }
+
+  if(g > m) cout << 0 << "\n";
+  else {
+    cout << (1 + m/g)/2 << "\n";
   }
   
-  ll g = 1;
-  rep(i,n){
-    g = lcm(g,a[i]/2);
-    
-  }
-
-  if(!f){
-    cout << 0 << "\n";
-  }
-  else{
-    ll res = m/g;
-    res  = (res+1)/2;
-    cout << res << "\n";
-  }
-
   return 0;
 }

@@ -2,33 +2,41 @@
 #include <algorithm>
 #include <vector>
 #include <string>
-#define rep(i,n) for(int i=0;i<n;++i)
-#define rep1(i,n) for(int i=1;i<=n;++i)
+#include <utility>
+#include <set>
+#include <map>
+#include <cmath>
+#include <queue>
+#include <cstdio>
+#include <limits>
+#define rep(i,n) for(int i = 0; i < n; ++i)
+#define rep1(i,n) for(int i = 1; i <= n; ++i)
 using namespace std;
+template<class T>bool chmax(T &a, const T &b) { if(a < b){ a = b; return 1; } return 0; }
+template<class T>bool chmin(T &a, const T &b) { if(a > b){ a = b; return 1; } return 0; }
+template<class T> inline int  sz(T &a) { return a.size(); }
+using ll = long long; using ld = long double;
+using pi = pair<int,int>; using pl = pair<ll,ll>;
+using vi = vector<int>; using vvi = vector<vi>;
+using vl = vector<ll>; using vvl = vector<vl>;
+const int inf = numeric_limits<int>::max();
+const ll infll = numeric_limits<ll>::max();
 int main()
 {
-  int q;
-  cin >> q;
-  vector<string> s(q),t(q);
-  rep(i,q) cin >> s[i] >> t[i];
+  int q; cin >> q;
+  while(q-- > 0) {
+    string s,t; cin >> s >> t ;
+    vi vs(26, 0), vt(26, 0);
+    rep(i,sz(s)) {
+      vs[int(s[i] - 'a')]++;
+      vt[int(t[i] - 'a')]++;      
+    }
+    bool f = false;
+    rep(i,26) {
+      if(vs[i] > 0 && vt[i] > 0) f = true;
+    }
+    cout << (f ? "YES" : "NO") << "\n";
 
-  rep(i,q){
-    vector<bool> sc(26,false),tc(26,false);
-    for(auto& c:s[i]){
-      sc[(int)c-'a']=true;
-    }
-    for(auto& c:t[i]){
-      tc[(int)c-'a']=true;
-    }
-    bool f=false;
-    rep(j,26){
-      if(sc[j]&&tc[j]){
-	f=true;
-	break;
-      }
-    }
-    if(f) cout << "YES" << "\n";
-    else cout << "NO" << "\n";
   }
   return 0;
 }

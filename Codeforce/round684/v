@@ -1,0 +1,19 @@
++                                                ,                                               	                                               c                                                                                         ,                                                1)                          re                       [k                        		                                es                                      ++                               t                                 nt                 p(                    p[                                  -1                   	                          
+		  		  		c 		  ) 		  		  		c 		  ) 	mp		  		  		c 		  ) 		  		  		c 		  ) 	(c		  		  		c 		  ) 		  4)		  		  		c 		  ) 		  		  		c 		  ) 	mp		  		  		c 		  ) 		  		  		c 		  ) 	(c		  		  		c 		  -1] == '1') {
+		  c++;
+		}
+		l++;
+	      }
+	      if(c == 3) {
+		res.push_back(tmp[k]);
+	      }
+	    }	    	    
+	  }
+	  if(cnt == 4) {
+	    rep(k,4) 
+q
+:q
+:wq
+
+
+	      res.push_back(tmp[

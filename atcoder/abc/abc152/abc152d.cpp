@@ -2,96 +2,49 @@
 #include <algorithm>
 #include <vector>
 #include <string>
-#define rep(i,n) for(int i=0;i<n;++i)
-#define rep1(i,n) for(int i=1;i<=n;++i)
+#include <utility>
+#include <set>
+#include <map>
+#include <cmath>
+#include <queue>
+#include <cstdio>
+#include <limits>
+#define rep(i,n) for(int i = 0; i < n; ++i)
+#define rep1(i,n) for(int i = 1; i <= n; ++i)
 using namespace std;
-typedef long long ll;
+template<class T>bool chmax(T &a, const T &b) { if(a < b){ a = b; return 1; } return 0; }
+template<class T>bool chmin(T &a, const T &b) { if(a > b){ a = b; return 1; } return 0; }
+template<class T> inline int  sz(T &a) { return a.size(); }
+using ll = long long; using ld = long double;
+using pi = pair<int,int>; using pl = pair<ll,ll>;
+using vi = vector<int>; using vvi = vector<vi>;
+using vl = vector<ll>; using vvl = vector<vl>;
+const int inf = numeric_limits<int>::max();
+const ll infll = numeric_limits<ll>::max();
 int main()
 {
-  string s;
-  cin >> s;
-  int x = stoi(s);
-  ll cnt = 0;
-  rep1(i,x){
-    string ss = to_string(i);
-    string tt = ss;
-    reverse(ss.begin(), ss.end());
-    if(ss[0]=='0') continue;
-    int y = stoi(ss);
-    //    cout << y << "\n";
-    if(i>y){
-      // if(ss[0]==ss[ss.size()-1]){
-      // 	cnt+=2;
-      // }
-      if(ss[0]==ss[ss.size()-1]){
-	ll z = 1;
-	cnt++;
-	if(ss.size()>=2){
-	  cnt+=2;
-	  rep(j,ss.size()-2){
-	    cnt +=2* z;
-	    z *= 10;
-	  }
-	}
-	if(ss.size()>=3){
-	  string sss = tt.substr(1,tt.size()-2);
-	  int xx = stoi(sss);
-	  cnt +=2*xx;
-	}	
+  ll n; cin >> n;
+  vvl d(10, vl(10, 0));
+  rep1(i,n) {
+    int x = i;
+    int b = x % 10;
+    int a;
+    while(x > 0) {
+      if(x/10 == 0) {
+	a = x;
       }
-      else{
-	ll z = 1;
-	rep(j,ss.size()-1){
-	  cnt += 2*z;
-	  z *= 10;
-	}
-      }
+      x /= 10;
     }
-    else if(i==y){
-      cnt++;
-      ll z = 1;
-      if(ss.size()>=2){
-	cnt+=2;
-	rep(j,ss.size()-2){
-	  cnt += 2*z;
-	  z *= 10;
-	}
-      }
-      if(ss.size()>=3){
-	string sss = tt.substr(1,tt.size()-2);
-	int xx = stoi(sss);
-	cnt += 2*xx;
-      }
-    }
-    else{
-      if(ss[0]==ss[ss.size()-1]){
-	cnt++;
-	ll z = 1;
-	if(ss.size()>=2){
-	  cnt+=2;
-	  rep(j,ss.size()-2){
-	    cnt += 2*z;
-	    z *= 10;
-	  }
-	}
-	if(ss.size()>=3){
-	  string sss = tt.substr(1,tt.size()-2);
-	  int xx = stoi(sss);
-	  cnt += 2*xx;
-	}	
-      }
-      else{
-	ll z = 1;
-	if(ss.size()>=2){
-	  rep(j,ss.size()-2){
-	    cnt += 2*z;
-	    z *= 10;
-	  }
-	}
-      }
-    }
-    //    cout << i << ":" << cnt << "\n";
+    d[a][b]++;
   }
-  cout << cnt << "\n";
+
+  ll res = 0;
+  rep1(i,9) {
+    rep1(j,9) {
+      res += d[i][j]*d[j][i];
+    }
+  }
+  cout << res << "\n";
+  
   return 0;
 }

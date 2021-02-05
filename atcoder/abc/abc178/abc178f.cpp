@@ -20,45 +20,69 @@ using vi = vector<int>; using vii = vector<vi>;
 using vl = vector<ll>; using vll = vector<vl>;
 const int inf = numeric_limits<int>::max();
 const ll infll = numeric_limits<ll>::max();
+// ランレングス圧縮.配列の連続している要素をまとめてしまう圧縮.
+vector<pair<int,int>> rle(vector<int> a){
+  vector<pair<int,int>> res;
+  int n = a.size();
+  int cnt = 1;
+  pair<int,int> p;
+  p.first = a[0];
+  rep(i,n-1){
+    if(a[i]==a[i+1]){
+      cnt++;
+    }
+    else{
+      p.second = cnt;
+      res.push_back(p);
+      cnt = 1;
+      p.first = a[i+1];
+    }
+  }
+  p.second = cnt;
+  res.push_back(p);
+  return res;
+}
+
 int main()
 {
   int n; cin >> n;
   vi a(n),b(n);
   rep(i,n) cin >> a[i];
   rep(i,n) cin >> b[i];
-
-  int m = 0;
-  rep1(i,n) {
-    int lb = -1, ub = a.size();
+  
+  int l = -inf, r = inf;
+  vector<pi> p = rle(b);
+  int id = 0;
+  for(auto val: p) {
+    auto [num, siz] = val;
+    int lb = -1, ub = n;
     while(ub - lb > 1) {
       int mid = (ub + lb) / 2;
-      (a[mid] <= i ? lb : ub) = mid;
+      (a[mid] <= num ? lb : ub) = mid;
     }
-    int amax = lb;
-    lb = -1; ub = b.size();
+    int usiro = lb;
+    lb = -1; ub = n;
     while(ub - lb > 1) {
       int mid = (ub + lb) / 2;
-      (b[mid] >= i ? ub : lb) = mid;
+      (a[mid] >= num ? ub : lb) = mid;
     }
-    int bmin = ub;
-    chmax(m, amax - bmin + 1);
+    int mae = ub + n;
+    // cout << mae << "\n";
+    //    cout << usiro - id + 1 << ":" << mae - (id + siz) << "\n";    
+    chmax(l, usiro - id + 1);
+    chmin(r, mae - (id + siz));
+    id += siz;
   }
 
-  vi c(n);
-  rep(i,n) {
-    c[i] = b[(i+m)%n];
-  }
-
-  bool f = false;
-  rep(i,n) {
-    if(a[i] == c[i]) f = true;
-  }
-
-  if(f) cout << "No" << "\n";
+  //  cout << l << ":" << r << "\n";  
+  if(l > r) cout << "No" << "\n";
   else {
     cout << "Yes" << "\n";
-    rep(i,n) cout << c[i] << " ";
+    rep(i,n) {
+      cout << b[(i-l+2*n) % n] << " ";
+    }
     cout << "\n";
   }
+  
   return 0;
 }

@@ -1,80 +1,72 @@
 #include <iostream>
 #include <algorithm>
 #include <vector>
-#define rep(i,n) for(int i=0;i<n;++i)
-#define rep1(i,n) for(int i=1;i<=n;++i)
+#include <string>
+#include <utility>
+#include <set>
+#include <map>
+#include <cmath>
+#include <queue>
+#include <cstdio>
+#include <limits>
+#define rep(i,n) for(int i = 0; i < n; ++i)
+#define rep1(i,n) for(int i = 1; i <= n; ++i)
 using namespace std;
-typedef long long ll;
+template<class T>bool chmax(T &a, const T &b) { if(a < b){ a = b; return 1; } return 0; }
+template<class T>bool chmin(T &a, const T &b) { if(a > b){ a = b; return 1; } return 0; }
+template<class T> inline int  sz(T &a) { return a.size(); }
+using ll = long long; using ld = long double;
+using pi = pair<int,int>; using pl = pair<ll,ll>;
+using vi = vector<int>; using vvi = vector<vi>;
+using vl = vector<ll>; using vvl = vector<vl>;
+const int inf = numeric_limits<int>::max();
+const ll infll = numeric_limits<ll>::max();
+// ユークリッドの互除法で最大公約数を求める
 ll gcd(ll a,ll b){
   if(b==0) return a;
-  else return gcd(b,a%b);
+  return gcd(b,a%b);
 }
+// 最小公倍数
 ll lcm(ll a,ll b){
   return a*b/gcd(a,b);
-}
-bool comp(ll& a,ll& b){
-  return a>b;
-}
-bool C(ll z,vector<ll> p,ll x,ll y,ll a,ll b,ll k){
-  ll sum=0;
-  int i=0;
-  ll s=z/lcm(a,b);
-  while(i<s){
-    sum+=(x+y)*(p[i]/100);
-    ++i;
-  }
-  ll t=z/b-z/lcm(a,b);
-  while(i<s+t){
-    sum+=y*(p[i]/100);
-    ++i;
-  }
-  ll u=z/a-z/lcm(a,b);
-  while(i<s+t+u){
-    sum+=x*(p[i]/100);
-    ++i;
-  }
-  return k<=sum;
-}
-ll upper(ll l,ll r,vector<ll> p,ll x,ll y,ll a,ll b,ll k){
-  ll lb=l-1,ub=r+1;
-  while(ub-lb>1){
-    ll mid=(lb+ub)/2;
-    if(C(mid,p,x,y,a,b,k)) ub=mid;
-    else lb=mid;
-  }
-  return ub;
 }
 
 int main()
 {
-  int q;
-  cin >> q;
-  vector<int> n(q);
-  vector<vector<ll>> p(q);
-  vector<ll> x(q),y(q);
-  vector<ll> a(q),b(q);
-  vector<ll> k(q);
-  rep(i,q){
-    cin >> n[i];
-    p[i].resize(n[i]);
-    rep(j,n[i]) cin >> p[i][j];
-    cin >> x[i] >> a[i];
-    cin >> y[i] >> b[i];
-    cin >> k[i];
-  }
-
-  rep(i,q){
-    sort(p[i].begin(), p[i].end(),comp);
-    if(x[i]>y[i]){
-      swap(a[i],b[i]);
-      swap(x[i],y[i]);
+  int q; cin >> q;
+  while(q-- > 0) {
+    int n; cin >> n;
+    vl p(n);
+    rep(i,n) {
+      cin >> p[i];
+      p[i] /= 100;
     }
-    ll res=upper(0,n[i],p[i],x[i],y[i],a[i],b[i],k[i]);
-
-    if(res==n[i]+1) cout << -1 << "\n";
-    else cout << res << "\n";
+    ll x,a; cin >> x >> a;
+    ll y,b; cin >> y >> b;
+    if(x < y) {
+      swap(x,y); swap(a,b);
+    }
+    ll k; cin >> k;
+    ll c = lcm(a, b);
+    sort(p.begin(), p.end(), [](ll a, ll b){
+      return a > b;
+    });
+    int lb = 0, ub = n+1;
+    while(ub - lb > 1) {
+      int mid = (ub + lb) / 2;
+      ll sum = 0;
+      for (int i = 0; i < mid/c; ++i) {
+	sum += p[i] * (x + y);
+      }
+      for (int i = mid/c; i < mid/c + mid/a - mid/c; ++i) {
+	sum += p[i] * x;
+      }
+      for (int i = mid/a; i < mid/a + mid/b - mid/c; ++i) {
+	sum += p[i] * y;
+      }
+      (sum >= k ? ub : lb) = mid;
+    }
+    cout << (ub == n+1 ? -1 : ub) << "\n";
   }
-
-  
   return 0;
 }

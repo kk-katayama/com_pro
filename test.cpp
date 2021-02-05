@@ -23,9 +23,7 @@ const int inf = numeric_limits<int>::max();
 const ll infll = numeric_limits<ll>::max();
 int main()
 {
-  vi a(10);
-  cout << sz(a) << "\n";
-  a.push_back(10);
-  cout << sz(a) << "\n";
+  cout << ((1<<3)&8) << "\n";
+  
   return 0;
 }

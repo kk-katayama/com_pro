@@ -1,38 +1,28 @@
 //*******************************************************
 // Tree
 //*******************************************************
-
-// status of edge
-template <typename X>
-struct Edge{
-  int from;
-  int to;
-  X cost;
-
-  Edge() = default;
-
-  Edge(int from, int to, X cost) : from(from), to(to), cost(cost) {}
-};
-
-//status of node
-template <typename X>
-struct Node{
-  int idx;
-  vector<Edge<X>> edge;
-  
-  Node() = default;
-
-  explicit Node(int idx) : idx(idx) {
-  }
-  
-};
-
-// tree
 template <typename X>
 class Tree{
 public:
+  // status of edge
+  struct Edge{
+    int idx;
+    int from;
+    int to;
+    X cost;
+    Edge(int idx, int from, int to, X cost) : idx(idx), from(from), to(to), cost(cost) {}
+  };
+
+  //status of node
+  template <typename X>
+  struct Node{
+    int idx;
+    vector<Edge<X>> edge;
+    Node(int idx) : idx(idx) {}
+  };
+  
   int n; // number of node
-  vector<Node<X>> node;
+  vector<Node> node;
   vector<int> par; // par[v] := 頂点vの親
   vector<int> depth; // depth[v] := 根から見たときの頂点vの深さ
   vector<X> dist; // dist[v] := 根から頂点vへの距離  
@@ -56,21 +46,21 @@ public:
   Tree(int n, vector<int> a, vector<int> b) : n(n) {
     Init_Node();
     rep(i,n-1) {
-      add_edge(a[i], b[i]);
-      add_edge(b[i], a[i]);  // indirected edge
+      add_edge(i, a[i], b[i]);
+      add_edge(i, b[i], a[i]);  // indirected edge
     }
   }
 
   Tree(int n, vector<int> a, vector<int> b, vector<X> c) : n(n) {
     Init_Node();
     rep(i,n-1) {
-      add_edge(a[i], b[i], c[i]);
-      add_edge(b[i], a[i], c[i]);  // indirected edge
+      add_edge(i, a[i], b[i], c[i]);
+      add_edge(i, b[i], a[i], c[i]);  // indirected edge
     }
   }  
 
-  void add_edge(int from, int to, X cost = 1) {
-    node[from].edge.emplace_back(from, to, cost);
+  void add_edge(int idx, int from, int to, X cost = 1) {
+    node[from].edge.emplace_back(idx, from, to, cost);
   }
 
   int DFS_Init(int v, int p, int dep, int dis) {

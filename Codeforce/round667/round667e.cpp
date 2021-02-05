@@ -23,6 +23,36 @@ const int inf = numeric_limits<int>::max();
 const ll infll = numeric_limits<ll>::max();
 int main()
 {
-  
+  int q; cin >> q;
+  while(q-- > 0) {
+    int n,k; cin >> n >> k;
+    vi x(n); rep(i,n) scanf("%d", &x[i]);
+    int y;
+    rep(i,n) {
+      scanf("%d", &y);
+    }
+    sort(x.begin(), x.end());
+    vi v(n);
+    rep(i,n) {
+      int lb = -1, ub = n;
+      while(ub - lb > 1) {
+	int mid = (ub + lb) / 2;
+	(x[mid] > x[i] + k ? ub : lb) = mid;
+      }
+      v[i] = ub - i;
+    }
+
+    vi suf(n+1);
+    suf[n] = 0;
+    for (int i = n-1; i >= 0; --i) {
+      suf[i] = max(suf[i+1], v[i]);
+    }
+    int res = 0;
+    rep(i,n) {
+      int tmp = v[i] + suf[v[i]+i];
+      chmax(res, tmp);
+    }
+    cout << res << "\n";
+  }
   return 0;
 }

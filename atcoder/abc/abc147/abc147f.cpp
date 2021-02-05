@@ -1,137 +1,82 @@
 #include <iostream>
 #include <algorithm>
 #include <vector>
+#include <string>
+#include <utility>
+#include <set>
+#include <map>
 #include <cmath>
-#define rep(i,n) for(int i=0;i<n;++i)
-#define rep1(i,n) for(int i=1;i<=n;++i)
+#include <queue>
+#include <cstdio>
+#include <limits>
+#define rep(i,n) for(ll i = 0; i < n; ++i)
+#define rep1(i,n) for(int i = 1; i <= n; ++i)
 using namespace std;
-template<typename X>
-struct Matrix
-{
-  vector<vector<X>> mat;
-  int row;
-  int col;
-  
-  Matrix(int _row,int _col){
-    row = _row;
-    col = _col;
-    mat.resize(row,vector<X>(col,0));
-    //    rep(i,row) mat[i].assign(col,0);
-  }
+template<class T>bool chmax(T &a, const T &b) { if(a < b){ a = b; return 1; } return 0; }
+template<class T>bool chmin(T &a, const T &b) { if(a > b){ a = b; return 1; } return 0; }
+template<class T> inline int  sz(T &a) { return a.size(); }
+using ll = long long; using ld = long double;
+using pi = pair<int,int>; using pl = pair<ll,ll>;
+using vi = vector<int>; using vvi = vector<vi>;
+using vl = vector<ll>; using vvl = vector<vl>;
+const int inf = numeric_limits<int>::max();
+const ll infll = numeric_limits<ll>::max();
+struct Rangeset{
+  set<pl> st;
 
-  Matrix(vector<vector<X>> _mat){
-    mat = _mat;
-    row = mat.size();
-    col = mat[0].size();
+  Rangeset() {
+    st.insert({-infll,-infll});
+    st.insert({infll,infll});    
   }
   
-  Matrix operator + (const Matrix a) const{
-    Matrix temp(*this);
-    rep(i,row) rep(j,col){
-      temp.mat[i][j] += a.mat[i][j];
+  void insert(ll l, ll r) {
+    auto it = prev(st.lower_bound({l+1, l+1}));
+    if(it->first <= l && r <= it->second) return ;
+    if(it->first <= l && l <= it->second + 1) {
+      l = it->first;
+      it = st.erase(it);
     }
-    return temp;
-  }
-
-  Matrix operator - (const Matrix a) const{
-    Matrix temp(*this);
-    rep(i,row) rep(j,col){
-      temp.mat[i][j] -= a.mat[i][j];
+    else it = next(it);
+    while(r > it->second) {
+      it = st.erase(it);
     }
-    return temp;
-  }
-
-  Matrix operator * (const Matrix a) const{
-    Matrix temp(*this);
-    Matrix res(temp.row,a.col);
-    rep(i,temp.row){
-      rep(j,a.col){
-	rep(k,temp.col){
-	  res.mat[i][j] += temp.mat[i][k] * a.mat[k][j];
-	}
-      }
+    if(it->first - 1 <= r && r <= it->second) {
+      r = it->second;
+      it = st.erase(it);
     }
-    return res;
+    st.insert({l, r});
   }
-
-  Matrix pow(int n){
-    Matrix A = mat;
-    Matrix B(col,col);
-    rep(i,col)  B.mat[i][i] = 1;
-    while(n > 0){
-      if(n & 1) B = B * A;
-      A = A * A;
-      n >>= 1;
-    }
-    return B;
-  }
-  
-  void print(){
-    rep(i,row){
-      rep(j,col){
-	cout << mat[i][j] << " ";
-      }
-      cout  << "\n";
-    }
-  }
-  
-  
 };
-
-vector<vector<int>> Gauss_Jordan(vector<vector<int>> & A,vector<int>& b){
-  int n = A.size();
-  int m = A[0].size();
-  vector<vector<int>> B(n,vector<int>(m+1));
-
-  rep(i,n) rep(j,m) B[i][j] = A[i][j];
-  rep(i,n) B[i][m] = b[i];
-
-  rep(j,n){
-    int pivot = j;
-    for(int k=j;k<n;++k){
-      if(abs(B[k][j]) > abs(B[pivot][j])) pivot = k;
-    }
-    if(pivot!=j){
-      rep(l,m){
-	B[j][l] = (B[j][l]+B[pivot][l])%2;
-      }
-    }
-    for(int k=j+1;k<n;++k){
-      if(B[k][j]==0) continue;
-      rep(l,m){
-	B[k][l] = (B[k][l]+B[j][l])%2;
-      }
-    }
-    // Matrix<int> cc(B);
-    // cc.print();
-    // cout << "******************" << "\n";
-  }
-
-  return B;
-}
-
 int main()
 {
-  int n;
-  cin >> n;
-  vector<ll> a(n);
-  rep(i,n){
-    cin >> a[i];
+  ll n,x,d; cin >> n >> x >> d;
+  if(d == 0) {
+    cout << (x == 0 ? 1 : n+1) << "\n";
+    return 0;
+  }
+  if(d < 0) {
+    x = x + (n-1)*d;
+    d = -d;
+  }
+
+  map<ll,Rangeset> mp;
+  rep(i,n+1) {
+    ll gr = (x*i % d + d) % d;
+    ll l = x*i + i*(i-1)/2*d;
+    ll r = x*i + (2*n-i-1)*i/2*d;
+    mp[gr].insert(l, r);
   }
 
   ll res = 0;
-  vector<vector<int>> A(60);
-  rep(i,n){
-    int cnt = __builtin_popcountll(A[i]);
-
-    
+  for(auto tmp: mp) {
+    auto [ky, vl] = tmp;
+    for(auto tmp2: vl.st) {
+      auto [l, r] = tmp2;
+      res += (r-l)/d + 1;
+    }
+    res -= 2;
   }
+  cout << res << "\n";
 
-  vector<int> b(n,1);
-  vector<vector<int>> B = Gauss_Jordan(a,b);
-
-  
-  
   return 0;
 }
-
